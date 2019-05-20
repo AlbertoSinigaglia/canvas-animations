@@ -155,7 +155,7 @@
             while(tmp.x==food.x || tmp.y==food.y)tmp =new Square(Math.floor(Math.random()*nSquare), Math.floor(Math.random()*nSquare), colorSnake);
             return [tmp];
         }
-        var nSquare=2;
+        var nSquare=15;
         var food=new Square(Math.floor(Math.random()*nSquare), Math.floor(Math.random()*nSquare), colorFood);
         var snake=new Snake();
         function animate(){
