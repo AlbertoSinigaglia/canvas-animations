@@ -90,10 +90,26 @@
                     else if(direction==1)this.body.push(new Square(this.body[this.body.length-1].x-1, this.body[this.body.length-1].y));
                     else if(direction==2)this.body.push(new Square(this.body[this.body.length-1].x, this.body[this.body.length-1].y-1));
                     else if(direction==3)this.body.push(new Square(this.body[this.body.length-1].x+1, this.body[this.body.length-1].y));
-                    food=new Square(Math.floor(Math.random()*nSquare), Math.floor(Math.random()*nSquare), colorFood);
+                    food=generateFood(this.body);
                 }
                 this.draw();
             }
+        }
+        function generateFood(snake){
+            
+            var match=false;
+            var food;
+            console.log(snake);
+            do{
+                food= new Square(Math.floor(Math.random()*nSquare), Math.floor(Math.random()*nSquare), colorFood);
+                match=false;
+                for(i=0; i<snake.length&&!match; i++) if(snake[i].x==food.x&&snake[i].y==food.y){
+                    console.log("food: "+food.x+ " "+food.y);
+                    console.log("snake:"+snake[i].x+ " "+snake[i].y);
+                    match=true;
+                }
+            } while(match);
+            return food;
         }
         function trasla(els){
             for(var i= els.length-1; i>0; i--){
@@ -139,14 +155,27 @@
             while(tmp.x==food.x || tmp.y==food.y)tmp =new Square(Math.floor(Math.random()*nSquare), Math.floor(Math.random()*nSquare), colorSnake);
             return [tmp];
         }
-        var nSquare=80;
+        var nSquare=2;
         var food=new Square(Math.floor(Math.random()*nSquare), Math.floor(Math.random()*nSquare), colorFood);
         var snake=new Snake();
         function animate(){
-            setTimeout(animate,30);
-            c.clearRect(0, 0, canvas.width, canvas.height);
-            snake.update();
-            food.update();
+            console.log(snake.body.length);
+            if(snake.body.length!=(nSquare*nSquare)){
+                setTimeout(animate,300);
+                c.clearRect(0, 0, canvas.width, canvas.height);
+                snake.update();
+                food.update();
+            }
+            else {
+                c.clearRect(0, 0, canvas.width, canvas.height);
+                c.beginPath();
+                c.font = 'bold 100px serif';
+                c.strokeStyle="white";
+                c.fillStyle="white";
+                c.strokeText("WIN", innerWidth/2-165, innerHeight/2-25);
+                c.stroke();
+                c.closePath();
+            }
         }
         animate();
         window.addEventListener("keydown", function(e) {
