@@ -1,0 +1,146 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+            }
+            canvas{
+                border: 1px solid black;
+                background-color: #212121;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        canvas.addEventListener("mousemove", function(event) {
+            setPositionMouse(event);
+        });
+        var mouseX=innerWidth/2;
+        var mouseY=innerHeight/2;
+        function setPositionMouse(e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        }
+        function distance(x1, y1, x2, y2){
+            return Math.sqrt(
+                        Math.pow(x1-x2 ,2)
+                            +
+                        Math.pow(y1-y2 ,2)
+                    );
+        }
+        function Dot(n){
+            this.n=n;
+            this.draw= function(){
+
+            }
+            this.update=function(){
+                for(var i=0; i<n; i++){
+                    var angle = 360 / n * (i);
+                    var tan =  Math.tan(angle*Math.PI/180);
+                    
+                    c.beginPath();
+                    c.moveTo(mouseX,mouseY);
+                    c.strokeStyle="white";
+                    if(angle>0 && angle<90){
+                        if(tan>=1){
+                            c.lineTo(mouseX+max, mouseY-max*tan);
+                        }
+                        else{
+                            c.lineTo(mouseX+max, mouseY-max*tan);
+                        }
+                    }
+                    else if(angle>90 && angle<180){
+                        if(tan<=-1){
+                            c.lineTo(mouseX-max, mouseY-max*-tan);
+                        }
+                        else{
+                            c.lineTo(mouseX-max, mouseY-max*-tan);
+                        }
+                    }
+                    else if(angle>180 && angle<270){
+                        if(tan>=1){
+                            c.lineTo(mouseX-max, mouseY+max*tan);
+                        }
+                        else{
+                            c.lineTo(mouseX-max, mouseY+max*tan);
+                        }
+                    }
+                    else if(angle>270 && angle<360){
+                        if(tan<=-1){
+                            c.lineTo(mouseX+max, mouseY+max*-tan);
+                        }
+                        else{
+                            c.lineTo(mouseX+max, mouseY+max*-tan);
+                        }
+                    }
+                    else if(angle ==0 || angle==180){
+                        if(angle==0)c.lineTo(mouseX+max, mouseY);
+                        else c.lineTo(mouseX-max, mouseY);
+                    }
+                    else if (angle==90 || angle==270){
+                        if(angle==90)c.lineTo(mouseX, mouseY-max);
+                        else c.lineTo(mouseX, mouseY+max);
+                    }
+                    /*
+
+                    if(angle ==0 || angle == 180){
+                        if(angle==0)c.lineTo(mouseX, mouseY+max);
+                        else c.lineTo(mouseX, mouseY-max);
+                    }
+                    if (angle==90 || angle==270){
+                        if(angle==90)c.lineTo(mouseX-max, mouseY);
+                        else c.lineTo(mouseX+max, mouseY);
+                    }
+                    */
+                    c.stroke();
+                    c.closePath();
+                }
+            }
+        }
+        function Segment(x1,y1, x2, y2){
+            this.x1 = x1;
+            this.y1 = y1;
+            this.x2 = x2;
+            this.y2 = y2;
+            this.draw = function (){
+                
+                c.beginPath();
+                c.arc(mouseX, mouseY, 180, Math.PI*2, false);
+                c.stroke();
+                
+            }
+            this.update = function (){
+                this.draw();
+            }
+        }
+
+        
+        var max=0;
+        if(innerWidth>innerHeight) max=innerWidth;
+        else max=innerHeight;
+        var segmentArray = [];
+        for(var i=0; i<180; i++){
+            segmentArray.push(new Segment (Math.random()*innerWidth , Math.random()*innerHeight, Math.random()*innerWidth , Math.random()*innerHeight));
+        }
+        var dot= new Dot(180);
+
+
+
+        function animate(){
+            requestAnimationFrame(animate);
+            c.clearRect(0, 0, window.innerWidth, window.innerHeight);
+            for(var i = 0; i<segmentArray.length ; i++){
+                segmentArray[i].draw();
+            }
+            dot.update();
+        }
+        animate();
+    </script>
+</html>

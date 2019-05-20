@@ -1,0 +1,94 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+            }
+            canvas{
+                border: 1px solid black;
+                background-color: #212121;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+
+
+
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+
+
+        canvas.addEventListener("mousemove", function(event) {
+            setPositionMouse(event);
+        });
+        var mouseX=-999999999;
+        var mouseY=-999999999;
+        function setPositionMouse(e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        }
+
+        canvas.addEventListener("hover", function (evt) {
+            var mousePos = getMousePos(canvas, evt);
+            alert(mousePos.x + ',' + mousePos.y);
+        }, false);
+
+        //minima distanza 
+        var tollerance = 300;
+        function Dot(x,y){
+            this.x = x;
+            this.y = y;
+            this.draw = function (){}
+            this.update = function (){
+                var dist=distance(mouseX, mouseY, this.x, this.y);
+                if(dist<tollerance){
+                    c.beginPath(); 
+                    if(dist<tollerance/3){
+                        c.lineWidth = 3;
+                        c.strokeStyle="white";
+                    }
+                    else if(dist<tollerance*2/3){
+                        c.lineWidth = 2;
+                        c.strokeStyle="#ababab";
+                    }
+                    else{
+                        c.lineWidth = 1;
+                        c.strokeStyle="#515151";
+                    }
+                    c.moveTo(mouseX,mouseY);
+                    c.lineTo(this.x,this.y);                   
+                    c.stroke();
+                }
+                this.draw();
+            }
+        }
+
+        function distance(x1, y1, x2, y2){
+            return Math.sqrt(
+                        Math.pow(x1-x2 ,2)
+                            +
+                        Math.pow(y1-y2 ,2)
+                    );
+        }
+        var dotArray = [];
+        for(i=0; i<200; i++){
+            var x = (Math.random()-0.3)*innerWidth*1.6;
+            var y = (Math.random()-0.3)*innerHeight*1.6;
+            dotArray.push(new Dot (x , y));
+        }
+        function animate(){
+            requestAnimationFrame(animate);
+            c.clearRect(0, 0, window.innerWidth, window.innerHeight);
+            for(i = 0; i<dotArray.length ; i++){
+                dotArray[i].update();
+            }
+        }
+        animate();
+    </script>
+</html>
