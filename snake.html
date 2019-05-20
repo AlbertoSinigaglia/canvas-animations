@@ -4,6 +4,7 @@
             body{
                 padding:0px;
                 margin: 0px;
+                
             }
             canvas{
                 border: 1px solid black;
@@ -12,7 +13,9 @@
         </style>
     </head>
     <body>
-        <canvas></canvas>
+        <div style="display: flex; justify-content: center; align-items: center">
+            <canvas></canvas>
+        </div>
     </body>
     <script
   src="https://code.jquery.com/jquery-3.4.1.min.js"
@@ -29,8 +32,9 @@
 
 
 
-        
         var side= Math.min(canvas.height, canvas.width);
+        canvas.height=side;
+        canvas.width=side;
         function Square(x,y, color){
             this.x = x;
             this.y = y;
