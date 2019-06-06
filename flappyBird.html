@@ -1,0 +1,124 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+                
+            }
+            canvas{
+                border: 1px solid black;
+                background-color: #212121;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="display: flex; justify-content: center; align-items: center">
+            <canvas></canvas>
+        </div>
+    </body>
+    <script>
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        function Bird(){
+            this.x= innerWidth/4;
+            this.y= innerHeight/2;
+            this.dy= -20;
+            this.gravity= 1;
+            this.radius=20;
+            this.update= function(){
+                if(this.y+this.dy-this.radius>0)this.y+=this.dy;
+                else this.y=this.radius;
+                if(this.y+this.radius>innerHeight)play=false;
+                obstacles.forEach(obs => {
+                    if(this.x+this.radius>obs.x && this.x-this.radius<obs.x+obstacleWidth){
+                        if(this.y-this.radius< obs.space || this.y+this.radius > obs.space+obstacleSpace){
+                            play=false;
+                        }
+                    }
+                });
+                this.dy+=this.gravity;
+                this.draw();
+            }
+            this.draw= function (){
+                c.beginPath();
+                c.arc(this.x, this.y, this.radius, Math.PI*2, false);
+                c.fillStyle="red";
+                c.fill();
+                c.stroke();
+                c.closePath();
+            }
+        }
+        var play = true;
+        var obstacleVel = -10;
+        var obstacleWidth = 40;
+        var obstacleSpace=300;
+        function Obstacle(){
+            this.x = innerWidth;
+            this.space = Math.random() * (innerHeight- obstacleSpace) +10; 
+            this.update= function(){
+                this.x+= obstacleVel*time;
+                this.draw();
+            }
+            this.draw= function (){
+                c.beginPath();
+                c.rect(this.x, 0, obstacleWidth, this.space);
+                c.fillStyle="white";
+                c.fill();
+                c.stroke();
+                c.closePath();
+
+
+                c.beginPath();
+                c.rect(this.x, this.space+obstacleSpace, obstacleWidth, innerHeight- this.space - obstacleSpace);
+                c.fillStyle="white";
+                c.fill();
+                c.stroke();
+                c.closePath();
+            }
+        }
+
+        var bird= new Bird();
+        var obstacles = [new Obstacle()];
+        var time=1;
+        function newObstacle(){
+            setTimeout(function(){
+                time*=1.001;
+                obstacles.push ( new Obstacle());
+                newObstacle();
+            },1000);
+        }
+        function animate(){
+            c.clearRect(0, 0, canvas.width, canvas.height);
+            if(play){
+                requestAnimationFrame(animate);
+                for(var i = 0; i<obstacles.length; i++){
+                    if(obstacles[i].x+obstacleWidth<0) obstacles.splice(i,1);
+                }
+                obstacles.forEach(obs => {
+                    obs.update();
+                });
+                bird.update();
+            }
+            else{
+                c.fillStyle="#212121";
+                c.fillRect(0, 0, canvas.width, canvas.height);
+                c.font = "90px Arial";
+                c.textAlign = "center";
+                c.fillStyle="white";
+                c.fillText("Hai perso", innerWidth/2, innerHeight/2);
+            }
+            
+        }
+        animate();
+        newObstacle();
+        window.addEventListener("keydown", function(e) {
+            e = e || window.event;
+            if (e.key == ' ') {
+                bird.dy=-20;
+            }
+        }, false);
+    </script>
+</html>

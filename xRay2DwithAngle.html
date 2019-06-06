@@ -1,0 +1,220 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+                background-color: #212121;
+            }
+            canvas{
+                border-width: 0px;
+                border-color:#212121;
+                background-color: black;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        
+        canvas.addEventListener("mousemove", function(event) {
+            setPositionMouse(event);
+        });
+        var mouseX=innerWidth/2;
+        var mouseY=innerHeight/2;
+        function setPositionMouse(e) {
+            mouseX =  e.clientX;
+            mouseY = e.clientY;
+            dot.viewAngle = e.clientX/ canvas.width * 360;
+        }
+
+
+
+
+        //TODO quando si sposta il mouse calcolare angolo per poi aggiornare dot.viewAngle
+
+
+        function distance(x1, y1, x2, y2){
+            return Math.sqrt(Math.pow(x1-x2 ,2)+Math.pow(y1-y2 ,2));
+        }
+        function Dot(x,y,n){
+            this.n=n;
+            this.x=x;
+            this.y=y;
+            this.viewAngle=0;
+            this.draw= function(){}
+
+            this.update=function(){
+                var width=innerWidth/n;
+                for(var i=0; i<this.n; i++){
+                    var angle = VIEW / this.n * (i);
+                    var lengthseg=lengthSeg(this.x, this.y, Math.tan(this.viewAngle*Math.PI/180 + angle*Math.PI/180), (this.viewAngle + angle)%360);
+                    var length = lengthseg.length;
+                    var segment=lengthseg.segment;
+                    var maxDist = Math.sqrt(Math.pow(innerWidth, 2)+Math.pow(innerHeight, 2))/2;
+                    // console.log(maxDist);
+                    // console.log(innerHeight);
+                    // if(length!=-1){
+                    //     c.beginPath();
+                    //     var size = innerHeight - (length/maxDist)*innerHeight +10;
+                    //     c.rect(i*width, (innerHeight - size) /2, width, size);
+                    //     c.fillStyle=segment.color;
+                    //     c.strokeStyle=segment.color;
+                    //     c.fill();
+                    //     c.stroke();
+                    //     c.closePath();
+                    // }
+                   
+                    
+                    
+                    //per disegno 2D
+                    c.beginPath();
+                    c.moveTo(this.x,this.y);
+                    c.strokeStyle="white";
+                    if(length==-1) length=Math.sqrt(Math.pow(innerHeight, 2)+Math.pow(innerWidth, 2));
+                    c.strokeStyle="#808080";
+                    c.lineTo(this.x+length * Math.cos(this.viewAngle*Math.PI/180 + angle*Math.PI/180), this.y+length * Math.sin(this.viewAngle*Math.PI/180 + angle*Math.PI/180));
+                    c.strokeStyle="white";
+                    c.stroke();
+                    c.closePath();
+                    
+                }
+            }
+        }
+        function Segment(x1,y1, x2, y2, color){
+            this.x1 = x1;
+            this.y1 = y1;
+            this.x2 = x2;
+            this.y2 = y2;
+            this.color=color;
+            this.draw = function (){
+                c.beginPath();
+                c.moveTo(x2, y2);
+                c.lineTo(x1, y1);
+                c.strokeStyle=this.color;
+                c.stroke();
+                
+            }
+            this.update = function (){
+                this.draw();
+            }
+        }
+        function lengthSeg(orX, orY, orM, orAngle){
+            var orQ= orY -orM*orX;
+            var distMin=null;
+            var minX, minY;
+            for(let seg of segmentArray){
+                var segM=(seg.y2-seg.y1)/(seg.x2-seg.x1);
+                var segQ= seg.y1 -seg.x1*segM;
+                //fino a qua funziona tutto ....cit
+                var X= (orQ-segQ)/(segM-orM);
+                var Y= segM*X+segQ;
+                if(X<=Math.max(seg.x1, seg.x2)&&X>=Math.min(seg.x1, seg.x2)){
+                    var check=true;
+                    if(orAngle==0)check=X>=orX-1;
+                    else if(orAngle==180)check=X<=orX;
+                    else if(orAngle==90)check=Y>=orY;
+                    else if(orAngle==270)check=Y<=orY;
+                    else if(orAngle<90)check= X>=orX && Y>=orY;
+                    else if(orAngle<180)check= X<=orX && Y>=orY;
+                    else if(orAngle<270)check= X<=orX && Y<=orY;
+                    else check= X>=orX-1 && Y<=orY+1;
+                    var tmp= distance(orX, orY, X, Y);
+                    if(distMin==null&&check){
+                        distMin=tmp;
+                        distMin= {length: tmp, segment: seg}
+                        minX=X;
+                        minY=Y;
+                    }
+                    else if(distMin!=null && tmp<distMin.length && check){
+                        distMin.length=tmp;
+                        distMin.segment=seg;
+                        minX=X;
+                        minY=Y;
+                    }
+                }
+            }
+            c.beginPath();
+            c.arc(minX,minY,5,Math.PI*2,false);
+            c.strokeStyle="white";
+            c.fill();
+            c.stroke();
+            c.closePath();
+            if (distMin==null) return {length: -1, segment: null};
+            return distMin;
+        }
+        var VIEW = 60;
+        var max=0;
+        if(innerWidth>innerHeight) max=innerWidth;
+        else max=innerHeight;
+        
+        var dot= new Dot(innerWidth/2, innerHeight/2, 100);
+        function animate(){
+            requestAnimationFrame(animate);
+            c.clearRect(-5, -5, window.innerWidth+5, window.innerHeight+5);
+            dot.update();
+            for(var i = 0; i<segmentArray.length ; i++){
+                segmentArray[i].draw();
+            }
+        }
+
+        var color = [
+            "#C62828",
+            "#880E4F",
+            "#EC407A",
+            "#BA68C8",
+            "#4A148C",
+            "#7E57C2",
+            "#651FFF",
+            "#1A237E",
+            "#304FFE",
+            "#82B1FF",
+            "#03A9F4",
+            "#01579B",
+            "#0091EA",
+            "#00ACC1",
+            "#4DB6AC",
+            "#00695C",
+            "#004D40",
+            "#1DE9B6",
+            "#00E676",
+            "#33691E",
+            "#76FF03",
+            "#CDDC39",
+            "#C6FF00",
+            "#FDD835",
+            "#FFFF00",
+            "#FF8F00",
+            "#FF6F00",
+            "#FF9800",
+            "#FF9800",
+            "#FF5722",
+            "#FF5722",
+            "#FF3D00",
+            "#BCAAA4",
+            "#4E342E",
+            "#78909C",
+            "#37474F"
+        ];
+        var segmentArray =[];
+        var mindist=100;
+        var ls=200;
+        for(var i=0; i<30; i++){
+            do{
+                var x = Math.random()*innerWidth;
+                var y = Math.random()*innerHeight;
+            }while (distance(dot.x,dot.y,x,y)<mindist);
+            do{
+                var x1 = Math.random()*innerWidth;
+                var y1 = Math.random()*innerHeight;
+            }while (distance(x,y,x1,y1)>ls || distance(dot.x,dot.y,x1,y1)<mindist);
+            segmentArray.push(new Segment (x , y, x1 , y1, color[i]));
+        }
+        animate();
+    </script>
+</html>

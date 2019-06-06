@@ -136,11 +136,11 @@
             while(tmp.x==food.x || tmp.y==food.y)tmp =new Square(Math.floor(Math.random()*nSquare), Math.floor(Math.random()*nSquare), colorSnake);
             return [tmp];
         }
-        var nSquare=20;
+        var nSquare=100;
         var food=new Square(Math.floor(Math.random()*nSquare), Math.floor(Math.random()*nSquare), colorFood);
         var snake=new Snake();
         function animate(){
-            setTimeout(animate,200);
+            setTimeout(animate,10);
             c.clearRect(0, 0, canvas.width, canvas.height);
             snake.update();
             food.update();

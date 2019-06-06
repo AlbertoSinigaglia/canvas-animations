@@ -1,0 +1,219 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+            }
+            canvas{
+                border: 1px solid black;
+                background-color: #212121;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+        var color = [
+            "#FF3D00",
+            "white",
+            "#575757"
+        ];
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        canvas.addEventListener("mousemove", function(event) {
+            setPositionMouse(event);
+        });
+        window.addEventListener('resize', function(event) {
+            canvas.width=window.width;
+            canvas.height=window.height;
+        });
+        var mouseX=-innerWidth;
+        var mouseY=-innerHeight;
+        function setPositionMouse(e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        }
+        function distance(x1, y1, x2, y2){
+            return Math.sqrt(
+                        Math.pow(x1-x2 ,2)
+                            +
+                        Math.pow(y1-y2 ,2)
+                    );
+        }
+        
+        
+
+
+
+
+
+
+
+        function resolveCollision(particle, otherParticle) {
+            const xVelocityDiff = particle.dx - otherParticle.dx;
+            const yVelocityDiff = particle.dy - otherParticle.dy;
+
+            const xDist = otherParticle.x - particle.x;
+            const yDist = otherParticle.y - particle.y;
+
+            // Prevent accidental overlap of particles
+            if (xVelocityDiff * xDist + yVelocityDiff * yDist >= 0) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+                // Grab angle between the two colliding particles
+                const angle = -Math.atan2(otherParticle.y - particle.y, otherParticle.x - particle.x);
+
+                // Store mass in var for better readability in collision equation
+                const m1 = particle.mass;
+                const m2 = otherParticle.mass;
+
+                // Velocity before equation
+                const u1 = rotate({x : particle.dx, y: particle.dy}, angle);
+                const u2 = rotate({x : otherParticle.dx, y: otherParticle.dy}, angle);
+
+                // Velocity after 1d collision equation
+                const v1 = { x: u1.x * (m1 - m2) / (m1 + m2) + u2.x * 2 * m2 / (m1 + m2), y: u1.y };
+                const v2 = { x: u2.x * (m1 - m2) / (m1 + m2) + u1.x * 2 * m2 / (m1 + m2), y: u2.y };
+
+                // Final velocity after rotating axis back to original location
+                const vFinal1 = rotate(v1, -angle);
+                const vFinal2 = rotate(v2, -angle);
+
+                // Swap particle velocities for realistic bounce effect
+                particle.dx = vFinal1.x;
+                particle.dy = vFinal1.y;
+
+                otherParticle.dx = vFinal2.x;
+                otherParticle.dy = vFinal2.y;
+                /*var angle = -Math.atan2((particle.y-otherParticle.y), (particle.x-otherParticle.x));
+                var rotation = rotate(particle.dx,particle.dy, angle);
+                particle.dx=rotation.x;
+                particle.dy=rotation.y;
+                rotation = rotate(otherParticle.dx,otherParticle.dy, angle);
+                otherParticle.dx=rotation.x;
+                otherParticle.dy=rotation.y;
+
+
+                var particleX= (particle.mass-otherParticle.mass)/(particle.mass+otherParticle.mass)*particle.dx + 2*otherParticle.mass/(particle.mass+otherParticle.mass)*otherParticle.dx;
+                var otherParticleX= 2*particle.mass/(particle.mass+otherParticle.mass)*particle.dx+(otherParticle.mass - particle.mass)/(particle.mass+otherParticle.mass)*otherParticle.dx;
+                var particleY= (particle.mass-otherParticle.mass)/(particle.mass+otherParticle.mass)*particle.dy + 2*otherParticle.mass/(particle.mass+otherParticle.mass)*otherParticle.dy;
+                var otherParticleY= 2*particle.mass/(particle.mass+otherParticle.mass)*particle.dy+(otherParticle.mass - particle.mass)/(particle.mass+otherParticle.mass)*otherParticle.dy;
+                
+
+                rotation = rotate(particleX,particleY, -angle);
+                particle.dx=rotation.x;
+                particle.dy=rotation.y;
+                rotation = rotate(otherParticleX,otherParticleY, -angle);
+                otherParticle.dx=rotation.x;
+                otherParticle.dy=rotation.y;*/
+
+
+
+            }
+        }
+
+        function rotate(velocity, angle) {
+    const rotatedVelocities = {
+        x: velocity.x * Math.cos(angle) - velocity.y * Math.sin(angle),
+        y: velocity.x * Math.sin(angle) + velocity.y * Math.cos(angle)
+    };
+
+    return rotatedVelocities;
+}
+
+        function Element(x,y, dx, dy){
+            this.x=x; 
+            this.y=y;
+            this.radius=20;
+            this.mass=20;
+            this.dx=dx;
+            this.dy=dy;
+            this.draw=()=>{
+                c.beginPath();
+                c.arc(this.x, this.y, this.radius, Math.PI*2, false);
+                c.fillStyle="white";
+                c.strokeStyle="grey";
+                c.fill();
+                c.stroke();
+            }
+            this.update=()=>{
+                
+                elements.forEach(element => {
+                    if(element!=this)
+                        if(distance(this.x+this.dx, this.y+this.dy, element.x+element.dx, element.y+element.dy)<this.radius+element.radius)
+                            resolveCollision(this, element);
+                    
+                });
+                if(this.x+this.dx<this.radius||this.x+this.dx+this.radius>canvas.width) this.dx*=-1;
+                if(this.y+this.dy<this.radius||this.y+this.dy+this.radius>canvas.height) this.dy*=-1;
+                this.x+=this.dx;
+                this.y+=this.dy;
+                
+                this.draw();
+            }
+        }
+        /*
+        function rotate(dx,dy,angle){
+            return {
+                x: dx * Math.cos(angle) - dy*Math.sin(angle) ,
+                y: dx * Math.cos(angle) - dy*Math.sin(angle)
+            }
+        }*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function animate(){
+            requestAnimationFrame(animate);
+            c.clearRect(0, 0, window.innerWidth, window.innerHeight);
+            for(i = 0; i<elements.length ; i++){
+                elements[i].update();
+            }
+        }
+        var elements=[];
+        var maxRadius=40;
+        function init(){
+            for(var i = 0; i<50; i++){
+                elements.push(
+                    new Element(
+                        Math.random()*(canvas.width-40)+20, 
+                        Math.random()*(canvas.height-40)+20, 
+                        (Math.random()-0.5)*10, 
+                        (Math.random()-0.5)*10
+                    )
+                );
+            }
+            // elements.push(new Element(innerWidth/2-200, innerHeight/2, 3, 0));
+            // elements.push(new Element(innerWidth/2+200, innerHeight/2+39, 2, 0));
+        }
+        init();
+        animate();
+    </script>
+</html>

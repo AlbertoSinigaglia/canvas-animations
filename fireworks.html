@@ -1,0 +1,146 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+            }
+            canvas{
+                border: 1px solid black;
+                background-color: #212121;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        window.addEventListener('resize', function(event) {
+            canvas.width=window.width;
+            canvas.height=window.height;
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        var fireworkVel=5;
+        function Firework(){
+            this.x=canvas.width*Math.random();
+            this.y= canvas.height;
+            this.color={r:Math.random()*255,g:Math.random()*255,b:Math.random()*255};
+            this.dy=fireworkVel;
+            this.life=Math.random()*canvas.height/2;
+            this.exploded=false;
+            this.particles=[];
+            this.ended=false;
+            this.draw=function(){
+                c.beginPath();
+                c.fillStyle="rgba("+this.color.r+","+this.color.g+","+this.color.b+",1)";
+                c.strokeStyle="rgba("+this.color.r+","+this.color.g+","+this.color.b+",1)";
+                //c.arc(this.x, this.y, 3, Math.PI*2, false);
+                c.ellipse(this.x, this.y, 2, 3, 0, 0, Math.PI*2, false);
+                c.fill();
+                c.stroke();
+                c.closePath();
+            }
+            this.update=function(){
+                if(this.life<this.y){
+                    this.y-=this.dy;
+                    this.draw();
+                }
+                else if(!this.exploded)this.shot();
+                else this.updateParticles();
+            }
+            this.shot=function(){
+                this.exploded=true;
+                for(var i=0; i<20; i++)
+                    this.particles.push(new Particle(this.x, this.y, this.color));
+            }
+            this.updateParticles=function(){
+                
+                if(!this.particles.length)this.ended=true;
+                else{
+                    for(var i=0; i<this.particles.length; i++){
+                        if(this.particles[i].life.current>=this.particles[i].life.max)this.particles.splice(i,1);
+                        if(i<this.particles.length)this.particles[i].update();
+                    }
+                }
+            }
+        }
+
+
+
+        var gravity=0.1;
+        function Particle(x,y, color){
+            this.x=x;
+            this.y=y;
+            this.color=color;
+            this.life={current:0, max:60}
+            this.dx=(Math.random()-0.5)*10;
+            this.dy=(Math.random()-0.5)*5;
+            this.draw=function(){
+                c.beginPath();
+                c.fillStyle="rgba("+this.color.r+","+this.color.g+","+this.color.b+","+(1-this.life.current/this.life.max)+")";
+                c.strokeStyle="rgba("+this.color.r+","+this.color.g+","+this.color.b+","+(1-this.life.current/this.life.max)+")";
+                c.arc(this.x, this.y, 1, Math.PI*2, false);
+                c.fill();
+                c.stroke();
+                c.closePath();
+            }
+            this.update=function(){
+                this.life.current++;
+                this.x+=this.dx;
+                this.y+=this.dy;
+                this.dy+=gravity;
+                this.draw();
+            }
+        }
+
+
+        var timeout=50;
+        var timer = Math.random()*timeout;
+        var fireworks=[];
+        function animate(){
+            requestAnimationFrame(animate);
+            c.fillStyle="rgba(0,0,0,.1)"
+            c.fillRect(0, 0, window.innerWidth, window.innerHeight);
+            if(timer<=0){
+                timer = Math.random()*timeout;
+                fireworks.push(new Firework());
+            }
+            else timer--;
+            for(var i=0; i<fireworks.length; i++){
+                fireworks[i].update();
+                if(fireworks[i].ended)fireworks.splice(i--,1);
+            }
+        }
+        animate();
+    </script>
+</html>

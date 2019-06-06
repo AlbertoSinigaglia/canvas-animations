@@ -1,0 +1,343 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+                
+            }
+            canvas{
+                border: 1px solid black;
+                background-color: #212121;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="display: flex; justify-content: center; align-items: center">
+            <canvas></canvas>
+        </div>
+    </body>
+    <script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+    <script>
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        window.addEventListener("keydown", function(e) {
+            e = e || window.event;
+            if (e.key == '38') {//up
+            }
+            else if (e.keyCode == '40') {//down
+            }
+            /*
+            else if (e.keyCode == '37') {//right
+                spacecraft.angle-=0.15;
+            }
+            else if (e.keyCode == '39') {//left
+                spacecraft.angle+=0.15;
+            }*/
+            else if (e.key == ' ') {
+                //shot
+                spacecraft.shot();
+            }
+        }, false);
+        canvas.addEventListener("mousemove", function(event) {
+            setPositionMouse(event);
+        });
+        function setPositionMouse(e) {
+            spacecraft.angle=Math.atan2(spacecraft.position.y-e.clientY, spacecraft.position.x- e.clientX)+Math.PI;
+        }
+
+        var shotAudio = document.createElement("audio");
+        shotAudio.src="shot.mp3";
+        shotAudio.setAttribute("preload", "auto");
+        shotAudio.setAttribute("controls", "none");
+        shotAudio.style.display = "none";
+        var distructionAudio = document.createElement("audio");
+        distructionAudio.src="distruction.mp3";
+        distructionAudio.setAttribute("preload", "auto");
+        distructionAudio.setAttribute("controls", "none");
+        distructionAudio.style.display = "none";
+
+
+
+
+
+
+
+
+        function Spacecraft(){
+            this.position={x: canvas.width/2, y: canvas.height/2}
+            this.angle=0;
+            this.bullets=[];
+            this.points = [
+                {x: this.position.x+40, y: this.position.y},
+                {x: this.position.x+5, y: this.position.y+5},
+                {x: this.position.x-15, y: this.position.y+15},
+                {x: this.position.x-15, y: this.position.y+5},
+                {x: this.position.x-25, y: this.position.y+5},
+                {x: this.position.x-21, y: this.position.y},
+                {x: this.position.x-25, y: this.position.y-5},
+                {x: this.position.x-15, y: this.position.y-5},
+                {x: this.position.x-15, y: this.position.y-15},
+                {x: this.position.x+5, y: this.position.y-5}
+            ];
+            this.update=function(){
+                for(var i = 0; i<this.bullets.length; i++){
+                    this.bullets[i].update();
+                    var hit = false;
+                    for(j=0; j<asteroids.length; j++){
+                        if(pointIsInPoly(this.bullets[i].position, asteroids[j].points, asteroids[j].x, asteroids[j].y)){
+                            hit=true;
+                            asteroids[j].hit();
+                        }
+                    }
+                    if(hit||this.bullets[i].position.x+bulletRadius>canvas.width ||this.bullets[i].position.x+bulletRadius<0 ||this.bullets[i].position.y+bulletRadius>canvas.heihgt||this.bullets[i].position.y+bulletRadius<0)this.bullets.splice(i,1);
+                }
+                this.draw();
+            }
+            this.draw = function (){
+                //per disegno triangolo
+                c.save();
+                c.beginPath();
+                c.translate(this.position.x, this.position.y);
+                c.rotate(this.angle);
+                c.translate(-this.position.x, -this.position.y);
+                c.moveTo(this.points[0].x, this.points[0].y);
+                for(var i = 1; i<this.points.length; i++)c.lineTo(this.points[i].x, this.points[i].y);
+                c.lineTo(this.points[0].x, this.points[0].y);
+                c.lineWidth=2;
+                c.strokeStyle="white";
+                c.fillStyle="white";
+                c.fill();
+                c.stroke();
+                c.closePath();
+                c.beginPath();
+                c.moveTo(this.position.x+2, this.position.y);
+                c.lineTo(this.position.x-10, this.position.y-4);
+                c.lineTo(this.position.x-10, this.position.y+4);
+                c.lineTo(this.position.x+2, this.position.y);
+                c.strokeStyle="#212121";
+                c.fillStyle="#212121";
+                c.fill();
+                c.stroke();
+                c.closePath();
+                
+
+                c.beginPath();
+                c.moveTo(this.position.x+2, this.position.y);
+                c.lineTo(this.position.x-12, this.position.y);
+                c.lineWidth=1;
+                c.strokeStyle="white";
+                c.fillStyle="white";
+                c.fill();
+                c.stroke();
+                c.closePath();
+
+
+
+                c.restore();
+                //fine disegno triangolo
+            }
+            this.shot=function(){
+                var tmp = shotAudio.cloneNode();
+                tmp.volume = 0.1;
+                tmp.play();
+                this.bullets.push(new Bullet(this.position.x+40*Math.cos(this.angle), this.position.y+40*Math.sin(this.angle), this.angle));
+            }
+        }
+
+
+
+
+
+        var bulletVelocity=15;
+        var bulletRadius=2;
+        function Bullet(X,Y,ANGLE){
+            this.position={x: X, y:Y};
+            this.angle=ANGLE;
+            this.update=function(){
+                this.position.x += Math.cos(this.angle)*bulletVelocity;
+                this.position.y += Math.sin(this.angle)*bulletVelocity;
+                this.draw();
+            }
+            this.draw=function(){
+                c.beginPath();
+                c.arc(this.position.x, this.position.y, bulletRadius, Math.PI*2, false);
+                c.fillStyle="white";
+                c.strokeStyle="white";
+                c.lineWidth=1;
+                c.fill();
+                c.stroke();
+            }
+        }
+
+
+
+
+
+        function generatePoints(n, size){
+            var array = [];
+            for(var i = 0; i<n; i++){
+                var angle=Math.PI*2*i/n;
+                var length = size/5*3+(Math.random()*size/4*2);
+                array.push(
+                    {x: Math.cos(angle)*length, y:Math.sin(angle)*length}
+                );
+            }
+            return array;
+        }
+        var maxSize=40;
+        var maxVel=2;
+        function Asteroid(x=0,y=0, dx=0, dy=0, size=0){
+            this.x=(x)?x:Math.random()*canvas.width;
+            this.y=(y)?y:Math.random()*canvas.height;
+            this.velocity={x: (dx)?dx:(Math.random()-0.5)*maxVel,y: (dy)?dy:(Math.random()-0.5)*maxVel}
+            this.size=(size)?size:maxSize;//grandezza ''ideale'' per capire a che stadio di ''spaccatura'' si trova
+            this.points=generatePoints(5+Math.floor(Math.random()*7), this.size);
+            this.rotation=Math.random()/30;
+            this.angle=0;
+            this.life=Math.floor(this.size/3);
+            this.update=function(){
+                this.x+=this.velocity.x;
+                this.y+=this.velocity.y;
+                this.angle+=this.rotation;
+                for(var i=0; i<this.points.length; i++){
+                    var length=Math.sqrt(Math.pow(this.points[i].x, 2)+ Math.pow(this.points[i].y,2));
+                    var ang = Math.atan2(this.points[i].y, this.points[i].x);
+                    this.points[i].x=Math.cos(ang + this.rotation)*length;
+                    this.points[i].y=Math.sin(ang +  this.rotation)*length;
+                } 
+                this.draw();
+            }
+            this.draw=function(){
+                c.beginPath();
+                c.moveTo(this.x+this.points[0].x, this.y+this.points[0].y);
+                for(var i = 1; i<this.points.length; i++)c.lineTo(this.x+this.points[i].x, this.y+this.points[i].y);
+                c.lineTo(this.x+this.points[0].x, this.y+this.points[0].y);
+                c.strokeStyle="white";
+                c.stroke();
+                c.closePath();
+            }
+            this.hit=function(){
+                this.life-=1;
+                if(this.life<=0){
+                    var tmp = distructionAudio.cloneNode();
+                    tmp.play();         
+                    var ang= Math.atan2(this.velocity.y, this.velocity.x);
+                    this.size=this.size/2;
+                    this.points = generatePoints(5+Math.floor(Math.random()*7), this.size);
+                    this.rotation=Math.random()/30;
+                    this.angle=0;
+                    this.life=Math.floor(this.size/3);
+                    var displacement = Math.random()*Math.PI;
+                    // this.velocity={x: Math.cos(ang)*maxVel/2 ,y: Math.sin(ang)*maxVel/2}
+
+                    
+                    this.velocity={x: Math.cos(ang+displacement/2)*maxVel/2 ,y: Math.sin(ang+displacement/2)*maxVel/2}
+                    asteroids.push(new Asteroid(
+                        this.x,
+                        this.y,
+                        Math.cos(ang-displacement/2)*maxVel/2 ,
+                        Math.sin(ang-displacement/2)*maxVel/2,
+                        this.size
+                    ))
+                }
+            }
+        }
+        function pointIsInPoly(p, polygon, offsetX, offsetY) {
+            var tmp = [];
+            polygon.forEach(point => {
+                tmp.push({x: point.x+offsetX,y: point.y+offsetY});
+            });
+            polygon=tmp;
+            var isInside = false;
+            var minX = polygon[0].x, maxX = polygon[0].x;
+            var minY = polygon[0].y, maxY = polygon[0].y;
+            for (var n = 1; n < polygon.length; n++) {
+                var q = polygon[n];
+                minX = Math.min(q.x, minX);
+                maxX = Math.max(q.x, maxX);
+                minY = Math.min(q.y, minY);
+                maxY = Math.max(q.y, maxY);
+            }
+            if (p.x < minX || p.x > maxX || p.y < minY || p.y > maxY) {
+                return false;
+            }
+            var i = 0, j = polygon.length - 1;
+            for (i, j; i < polygon.length; j = i++) {
+                if ( (polygon[i].y > p.y) != (polygon[j].y > p.y) &&
+                        p.x < (polygon[j].x - polygon[i].x) * (p.y - polygon[i].y) / (polygon[j].y - polygon[i].y) + polygon[i].x ) {
+                    isInside = !isInside;
+                }
+            }
+            return isInside;
+        }
+        function distance(x1, y1, x2, y2){
+            return Math.sqrt(
+                        Math.pow(x1-x2 ,2)
+                            +
+                        Math.pow(y1-y2 ,2)
+                    );
+        }
+        
+
+        var spacecraft= new Spacecraft();
+        var asteroids=[];
+        var nAsteroid=10;
+        for(var i = 0; i< nAsteroid; i++)asteroids.push(new Asteroid());
+        function animate(){
+            requestAnimationFrame(animate);
+            c.clearRect(0, 0, canvas.width, canvas.height);
+            spacecraft.update();
+            for(var i = 0; i<asteroids.length; i++){
+                
+                if(asteroids[i].x-maxSize>canvas.width || asteroids[i].x<-maxSize || asteroids[i].y-maxSize>canvas.height || asteroids[i].y<-maxSize){
+                    asteroids[i]=generateAsteroid();
+                }
+                asteroids[i].update();
+            }
+        }
+        animate();
+        
+
+
+
+
+
+
+
+
+        function generateAsteroid(){
+            var x= (Math.random()-0.5);
+            var y= (Math.random()-0.5);
+            var dx=(Math.random() - 0.5)*3;
+            var dy=(Math.random() - 0.5)*3;
+            if(x>0 && y>0){
+                y= canvas.height+maxSize;
+                x= (Math.random())*canvas.width;
+                while(dy>0)dy=(Math.random() - 0.5)*maxVel;
+            }
+            else if(x<0 && y>0){
+                x-=maxSize;
+                y= (Math.random())*canvas.height;
+                while(dx<0)dx=(Math.random() - 0.5)*maxVel;
+            }
+            else if(x>0 && y<0){
+                y= (Math.random())*canvas.height;
+                x=innerWidth+maxSize;
+                while(dx>0)dx=(Math.random() - 0.5)*maxVel;
+            }
+            else if(x<0 && y<0){
+                y-=maxSize;
+                x= (Math.random())*canvas.width;
+                while(dy<0)dy=(Math.random() - 0.5)*maxVel;
+            }
+            return new Asteroid(x, y, dx, dy);
+            
+        }
+    </script>
+</html>

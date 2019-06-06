@@ -42,7 +42,7 @@
             this.length=side/nSquare;
             this.draw = function (){
                 c.beginPath();
-                c.rect( this.x*this.length, this.y*this.length , this.length, this.length);
+                c.arc( this.x*this.length+ this.length/2, this.y*this.length + this.length/2, this.length / 2,Math.PI*2, false);
                 c.fillStyle=this.color;
                 c.strokeStyle="#212121";
                 c.fill()
@@ -62,13 +62,15 @@
             this.body=generateFirstEL();
             this.draw = function (){
                 this.body.forEach(el => {
+                    /*
                     c.beginPath();
                     c.rect( el.x*el.length, el.y*el.length , el.length, el.length);
                     c.fillStyle=colorSnake;
                     c.strokeStyle=colorBorderSnake;
                     c.fill()
                     c.stroke();
-                    c.closePath();
+                    c.closePath();*/
+                    el.draw();
                 });
                 
             }
@@ -151,17 +153,17 @@
             return els;
         }
         function generateFirstEL(){
-            var tmp =new Square(Math.floor(Math.random()*nSquare), Math.floor(Math.random()*nSquare), "green");
+            var tmp =new Square(Math.floor(Math.random()*nSquare), Math.floor(Math.random()*nSquare), colorSnake);
             while(tmp.x==food.x || tmp.y==food.y)tmp =new Square(Math.floor(Math.random()*nSquare), Math.floor(Math.random()*nSquare), colorSnake);
             return [tmp];
         }
-        var nSquare=15;
+        var nSquare=20;
         var food=new Square(Math.floor(Math.random()*nSquare), Math.floor(Math.random()*nSquare), colorFood);
         var snake=new Snake();
         function animate(){
             console.log(snake.body.length);
             if(snake.body.length!=(nSquare*nSquare)){
-                setTimeout(animate,300);
+                setTimeout(animate,200);
                 c.clearRect(0, 0, canvas.width, canvas.height);
                 snake.update();
                 food.update();

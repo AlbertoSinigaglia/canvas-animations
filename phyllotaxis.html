@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+            }
+            canvas{
+                border: 1px solid black;
+                background-color: #000;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+
+
+
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        
+
+
+
+
+
+
+
+
+
+        c.translate(canvas.width/2, canvas.height/2);
+        var n = 0;
+        var fix = 5;
+        function animate(){
+            requestAnimationFrame(animate);
+            var angle=n*137.5;
+            var r=Math.sqrt(n)*fix;
+            c.beginPath();
+            c.arc(Math.cos(angle*Math.PI/180)*r, Math.sin(angle*Math.PI/180)*r, 3, Math.PI*2, false);
+            c.fillStyle="rgb("+(angle/r-r+256)%256+",100,100)";
+            c.lineWidth=0;
+            c.fill();
+            n++;
+        }
+        animate();
+    </script>
+</html>

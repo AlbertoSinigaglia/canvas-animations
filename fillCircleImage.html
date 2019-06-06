@@ -1,0 +1,114 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+        <img id="image" crossorigin="anonymous"src = 'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;w=1000&amp;q=80' style="display:none">
+    </body>
+    <script>
+
+
+
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        function distance(x1, y1, x2, y2){
+            return Math.sqrt(Math.pow(x1-x2 ,2)+Math.pow(y1-y2 ,2));
+        }
+        var image = document.getElementById("image");
+        image.onload = init; // Draw when image has loaded
+        // Load an image of intrinsic size 300x227 in CSS pixels
+        image.crossOrigin = "Anonymous";
+        image.setAttribute('crossOrigin', '');
+        var imageData=null;
+        function init(){
+            c.drawImage(image, 0, 0,image.width,image.height);
+            imageData=c.getImageData(0, 0, image.width, image.height);
+            canvas.width=image.width;
+            canvas.height=image.height;
+            animate();
+        }
+
+
+
+
+        function Circle(x,y){
+            this.x=x;
+            this.y=y;
+            this.radius=0;
+            this.touch=false;
+            this.update=function(all){
+                if(!this.touch){
+                    all.forEach(el => {
+                        if(el!=this){
+                            if(this.x-this.radius<0||this.x+this.radius>canvas.width||this.y-this.radius<0||this.y+this.radius>canvas.height){
+                                this.touch=true;
+                            }
+                            else if(distance(this.x, this.y, el.x, el.y)<=this.radius+el.radius){
+                                this.touch=true;
+                                el.touch=true;
+                            }
+                        }
+                    });
+                }
+                if(!this.touch)this.radius+=1;
+                this.draw();
+            }
+            this.draw=function(){
+                c.beginPath();
+                c.arc(this.x, this.y, this.radius, Math.PI*2, false);
+                var r= imageData.data[Math.floor(this.y) * (image.width * 4) + Math.floor(this.x) * 4];
+                var g= imageData.data[Math.floor(this.y) * (image.width * 4) + Math.floor(this.x) * 4+1];
+                var b= imageData.data[Math.floor(this.y) * (image.width * 4) + Math.floor(this.x) * 4+2];
+                c.fillStyle= "rgb("+r+","+g+","+b+")";
+                c.strokeStyle="white";
+                c.fill();
+                c.lineWidth=1;
+                c.stroke();
+                c.closePath();
+            }
+        }
+        var nCxF = 50;
+        function CircleSystem(){
+            this.circles=[];
+            this.update=function(){
+                for(i=0; i<nCxF;i++){
+                    var x,y;
+                    var security=1000;
+                    do{
+                        x= Math.random()*canvas.width;
+                        y=Math.random()*canvas.height;
+                        security--;
+                    }while(this.isInside(x,y)&&security);
+                    if(security)this.circles.push(new Circle(x,y));
+                    else console.error("ATTENZIONE!! SECURITY IN ATTO");
+                }
+                this.draw();
+            }
+            this.draw=function(){
+                this.circles.forEach(circle => {
+                    circle.update(this.circles);
+                });
+            }
+            this.isInside=function(x,y){
+                this.circles.forEach(circle => {
+                    if(distance(circle.x, circle.y,x,y)<circle.radius)return true;
+                });
+                return false;
+            }
+        }
+        var circleSystem= new CircleSystem();
+        function animate(){
+            requestAnimationFrame(animate);
+            c.clearRect(0,0,canvas.width, canvas.height);
+            circleSystem.update();
+        }
+    </script>
+</html>

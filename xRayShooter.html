@@ -1,0 +1,337 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+                background-color: #212121;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            canvas{
+                border-width: 0px;
+                border-color:#212121;
+                background-color: black;
+            }
+            #map{
+                border:1px solid yellow;
+                position: absolute; top:0px; right:0px;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+        <canvas id="map"></canvas>
+    </body>
+    <script>
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        var canvas2=document.getElementById("map");
+        var c2= canvas2.getContext('2d');
+        canvas2.width=canvas.width/5;
+        canvas2.height=canvas.height/5;
+        canvas.addEventListener("mousemove", function(event) {
+            setPositionMouse(event);
+        });
+        var mouseX=canvas.width/2;
+        var mouseY=canvas.height/2;
+        function setPositionMouse(e) {
+            mouseX =  e.clientX;
+            mouseY = e.clientY;
+            dot.viewAngle = e.clientX/ canvas.width * 360;
+        }
+        function hexToRgb(hex) {
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+        function drawGradient(){
+             //inizio creazione gradient
+             c.beginPath();
+            var grd = c.createLinearGradient(canvas.width/2, canvas.height, canvas.width/2, canvas.height/3);
+            grd.addColorStop(0, "white");
+            grd.addColorStop(1, "black");
+            c.fillStyle = grd;
+            c.rect(0, canvas.height/2, canvas.width, canvas.height/2);
+            c.strokeStyle="rgba(0,0,0,1)";
+            c.fill();
+            c.stroke();
+            c.closePath();
+            //fine gradient
+        }
+        function distance(x1, y1, x2, y2){
+            return Math.sqrt(Math.pow(x1-x2 ,2)+Math.pow(y1-y2 ,2));
+        }
+        function lengthSeg(orX, orY, orM, orAngle){
+            var orQ= orY -orM*orX;
+            var distMin=null;
+            var minX, minY;
+            for(let block of blocks){
+                for(let seg of block.segments){
+                    var segM=(seg.y2-seg.y1)/(seg.x2-seg.x1);
+                    // if(Math.abs(segM)==Infinity) segM= Math.tan(Math.PI)*-Math.sign(segM);
+                    if(Math.abs(segM)==Infinity){
+                        segM= Math.tan(Math.PI)*-Math.sign(segM);
+                        var X= seg.x1;
+                        var Y= orM*X+orQ;
+                        
+                    } 
+                    else {
+                        var segQ= seg.y1 -seg.x1*segM;
+                        //fino a qua funziona tutto ....cit
+                        var X= (orQ-segQ)/(segM-orM);
+                        var Y= segM*X+segQ;
+                    }
+                    
+                    if(X<=Math.max(seg.x1, seg.x2)&&X>=Math.min(seg.x1, seg.x2)&& Y<=Math.max(seg.y1, seg.y2)&&Y>=Math.min(seg.y1, seg.y2)){
+                        var check=true;
+                        if(orAngle==0)check=X>=orX-1;
+                        else if(orAngle==180)check=X<=orX;
+                        else if(orAngle==90)check=Y>=orY;
+                        else if(orAngle==270)check=Y<=orY;
+                        else if(orAngle<90)check= X>=orX && Y>=orY;
+                        else if(orAngle<180)check= X<=orX && Y>=orY;
+                        else if(orAngle<270)check= X<=orX && Y<=orY;
+                        else check= X>=orX-1 && Y<=orY+1;
+                        var tmp= distance(orX, orY, X, Y);
+                        if(distMin==null&&check){
+                            distMin=tmp;
+                            distMin= {length: tmp, segment: seg}
+                            minX=X;
+                            minY=Y;
+                        }
+                        else if(distMin!=null && tmp<distMin.length && check){
+                            distMin.length=tmp;
+                            distMin.segment=seg;
+                            minX=X;
+                            minY=Y;
+                        }
+                    }
+                }
+            }
+            c2.beginPath();
+            c2.arc(minX,minY,5,Math.PI*2,false);
+            c2.strokeStyle="white";
+            c2.fill();
+            c2.stroke();
+            c2.closePath();
+            if (distMin==null) return {length: -1, segment: null};
+            return distMin;
+        }
+        window.addEventListener("keydown", function(e) {
+            e = e || window.event;
+            var tmp = (dot.viewAngle+VIEW/2)*Math.PI /180;
+            if (e.keyCode == '38') {
+                dot.x+= (Math.cos(tmp)*vel);
+                dot.y+= Math.sin(tmp)*vel ;
+            }
+            if(e.keyCode == '40'){
+                dot.x-= (Math.cos(tmp)*vel);
+                dot.y-= Math.sin(tmp)*vel ;
+            }
+        }, false);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function Dot(x,y,n){
+            this.n=n;
+            this.x=x;
+            this.y=y;
+            this.viewAngle=0;
+            this.draw= function(){}
+
+            this.update=function(){
+                var width=canvas.width/n;
+                var previusLength=maxDist;
+                for(var i=0; i<this.n; i++){
+                    
+                    var angle = VIEW / this.n * (i);
+                    var lengthseg=lengthSeg(this.x, this.y, Math.tan(this.viewAngle*Math.PI/180 + angle*Math.PI/180), (this.viewAngle + angle)%360);
+                    var length = lengthseg.length;
+                    var segment=lengthseg.segment;
+                    var realL=length;
+                    if(length!=-1&&length<maxDist){
+                        length= length*Math.cos((VIEW/2-angle)*Math.PI/180);
+                        var size = canvas.height - (length/maxDist)*canvas.height;
+                        var result = hexToRgb(segment.color);
+                        var rap = (maxDist-length)/(maxDist-length/1.5);
+                        var r = result.r * rap;
+                        var g = result.g * rap;
+                        var b = result.b * rap;
+                        if(previusLength>realL){
+                            r*=0.7;
+                            g*=0.7;
+                            b*=0.7;
+                        }
+                        previusLength=realL;
+                        c.beginPath();
+                        c.lineWidth=0;
+                        c.strokeStyle="rgba(0,0,0,0)";
+                        /*- Math.cos(Math.abs((VIEW/2-angle))*Math.PI/180)*1000*/
+                        c.rect(i*width, (canvas.height - size) /2 , width, size);
+                        c.fillStyle=segment.color;
+
+                        
+                        
+                        c.fillStyle="rgba("+(r)+","+g+","+b+","+1+")";
+                        c.strokeStyle="rgba("+r+","+g+","+b+","+1+")";
+                        // c.fillStyle=segment.color;
+                        // c.strokeStyle=segment.color;
+                        c.fill();
+                        c.stroke();
+                        c.closePath();
+                    }
+                    //per disegno 2D
+                    c2.beginPath();
+                    c2.moveTo(this.x*rapporto,this.y*rapporto);
+                    c2.strokeStyle="white";
+                    if(realL==-1) realL=Math.sqrt(Math.pow(canvas.height, 2)+Math.pow(canvas.width, 2));
+                    c2.strokeStyle="#808080";
+                    c2.lineTo((this.x+realL * Math.cos(this.viewAngle*Math.PI/180 + angle*Math.PI/180))*rapporto, (this.y+realL * Math.sin(this.viewAngle*Math.PI/180 + angle*Math.PI/180))*rapporto);
+                    c2.strokeStyle="white";
+                    c2.stroke();
+                    c2.closePath();
+                    
+                }
+            }
+        }
+        var rapporto= canvas2.width/canvas.width;
+
+
+
+
+
+
+
+
+
+        function Block(x, y, w, h, color){
+            this.generateSeg=function(w, h, color){
+                var seg=[];
+                seg.push(new Segment(this.x, this.y, this.x+w, this.y, color));
+                seg.push(new Segment(this.x+w, this.y, this.x+w, this.y+h, color));
+                seg.push(new Segment(this.x+w, this.y+h, this.x, this.y+h, color));
+                seg.push(new Segment(this.x, this.y+h, this.x, this.y, color));
+                return seg;
+            }
+            this.x=x;
+            this.y=y;
+            this.w=w;
+            this.h=h;
+            this.color=color;
+            this.segments= this.generateSeg(w, h, color);
+
+            this.draw=function(){
+                c2.beginPath();
+                c2.fillStyle=this.color;
+                c2.rect(this.x*rapporto, this.y*rapporto, this.w*rapporto, this.h*rapporto);
+                c2.fill();
+                c2.strokeStyle="rgba(0,0,0,0)";
+                c2.stroke();
+                c2.closePath();
+                this.segments.forEach(seg => {
+                    seg.draw();
+                });
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        function Segment(x1,y1, x2, y2, color){
+            this.x1 = x1;
+            this.y1 = y1;
+            this.x2 = x2;
+            this.y2 = y2;
+            this.color=color;
+            this.draw = function (){
+                c2.beginPath();
+                c2.moveTo(x2*rapporto, y2*rapporto);
+                c2.lineTo(x1*rapporto, y1*rapporto);
+                c2.strokeStyle=this.color;
+                c2.stroke();
+                
+            }
+            this.update = function (){
+                this.draw();
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        var VIEW = 60;
+        var dot= new Dot(canvas.width/2, canvas.height/2, 1000);
+        var color = ["#C62828","#880E4F","#EC407A","#BA68C8","#4A148C","#7E57C2","#651FFF","#1A237E","#304FFE","#82B1FF","#03A9F4","#01579B","#0091EA","#00ACC1","#4DB6AC","#00695C","#004D40","#1DE9B6","#00E676","#33691E","#76FF03","#CDDC39","#C6FF00","#FDD835","#FFFF00","#FF8F00","#FF6F00","#FF9800","#FF9800","#FF5722","#FF5722","#FF3D00","#BCAAA4","#4E342E","#78909C","#37474F"];
+        var vel=30;
+        var maxDist = Math.sqrt(Math.pow(canvas.width, 2)+Math.pow(canvas.height, 2))/2;
+        var blocks= [
+                new Block(canvas.width/2-100,100,10,100, "#FFFFFF"),
+                new Block(canvas.width-200,100,100,100, "#FF0000"),
+                new Block(100,canvas.height-200,170,100, "#00ff00"),
+                new Block(canvas.width-300,canvas.height-300,200,90, "#ff5f00"),
+                new Block(canvas.width-300,canvas.height/3,170,50, "#ffaa00"),
+                new Block(canvas.width/4,canvas.height/4,100,120, "#beff00")
+            ];
+        
+
+        function animate(){
+            requestAnimationFrame(animate);
+            c.clearRect(-5, -5, window.canvas.width+5, window.canvas.height+5);
+            c2.clearRect(-5, -5, window.canvas.width+5, window.canvas.height+5);
+            drawGradient();
+            dot.update();
+            blocks.forEach(block => {
+                block.draw();
+            });
+        }
+        
+        animate();
+    </script>
+</html>

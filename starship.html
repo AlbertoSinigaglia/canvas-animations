@@ -1,0 +1,116 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+                background-color: #212121;
+            }
+            canvas{
+                border-width: 0px;
+                border-color:#212121;
+                background-color: black;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        
+        canvas.addEventListener("mousemove", function(event) {
+            setPositionMouse(event);
+        });
+        function setPositionMouse(e) {
+            coefficient= 2+7*e.clientX/canvas.width;
+        }
+        function distance(x1, y1, x2, y2){
+            return Math.sqrt(Math.pow(x1-x2 ,2)+Math.pow(y1-y2 ,2));
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        var coefficient=5;
+        function Foton(){
+            this.position={x: (Math.random()-0.5)*canvas.width/4+canvas.width/2,y: (Math.random()-0.5)*canvas.width/4+canvas.height/2};
+            this.angle=Math.atan2(this.position.y-canvas.height/2, this.position.x-canvas.width/2);
+            this.color=color[Math.floor(Math.random()*color.length)];
+            this.update=function(){
+                this.position.x += Math.cos(this.angle)*coefficient;
+                this.position.y += Math.sin(this.angle)*coefficient;
+                this.draw();
+            }
+            this.draw=function(){
+                c.beginPath();
+                c.fillStyle=this.color;
+                c.strokeStyle=this.color;
+                c.arc(this.position.x, this.position.y, 2, Math.PI*2, false);
+                c.fill();
+                c.stroke();
+                c.closePath();
+                c.beginPath();
+                c.fillStyle=this.color;
+                c.strokeStyle=this.color;
+                c.moveTo(this.position.x, this.position.y);
+                var length=distance(this.position.x, this.position.y, canvas.width/2, canvas.height/2);
+                c.lineTo(this.position.x-Math.cos(this.angle)*length/2, this.position.y-Math.sin(this.angle)*length/2)
+                c.fill();
+                c.stroke();
+                c.closePath();
+            }
+        }
+        var color=[
+            '#d50734',
+            '#f87be3',
+            '#5d12bb',
+            '#140a62',
+            '#747474',
+            '#fef3ff',
+            '#540711',
+            '#511646',
+        ]
+        function FotonSystem(){
+            this.fotons=[new Foton()];
+            this.update=function(){
+                for(var i=0; i<this.fotons.length; i++)
+                        if(this.fotons[i].position.x<0||this.fotons[i].position.x>canvas.width||this.fotons[i].position.y<0||this.fotons[i].position.y>canvas.height)
+                                this.fotons.splice(i,1);
+                var newFotons=Math.random()*10;
+                for(var i = 0; i<newFotons; i++)this.fotons.push(new Foton());
+                this.draw();
+            }
+            this.draw=function(){
+                this.fotons.forEach(el => {
+                    el.update();
+                });
+            }
+        }
+        var fs= new FotonSystem();
+        function animate(){
+            requestAnimationFrame(animate);
+            c.clearRect(0, 0, canvas.width, canvas.height);
+            fs.update();
+            // c.fillStyle="rgba(0,0,0,.3)"
+            // c.fillRect(0, 0, window.innerWidth, window.innerHeight);
+        }
+        animate();
+    </script>
+</html>

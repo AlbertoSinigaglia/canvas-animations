@@ -1,0 +1,70 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+                background-color: #212121;
+            }
+            canvas{
+                border-width: 0px;
+                border-color:#212121;
+                background-color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <button onclick="s='rubber';">gomma</button>
+        <button onclick="s='pen';">penna</button>
+        <canvas></canvas>
+    </body>
+    <script>
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        var draw=false;
+        var s='pen';
+        canvas.addEventListener("mousemove", function(event) {
+            setPositionMouse(event);
+        });
+        canvas.addEventListener("mousedown", function(event) {
+            c.beginPath();
+            c.moveTo(mouseX, mouseY);
+            draw=true;
+        });
+        canvas.addEventListener("mouseup", function(event) {
+            c.closePath();
+            draw=false;
+        });
+        var mouseX=innerWidth/2;
+        var mouseY=innerHeight/2;
+        function setPositionMouse(e) {
+            mouseX =  e.clientX;
+            console.log(canvas.offsetTop);
+            mouseY = e.clientY-canvas.offsetTop;
+        }
+        function distance(x1, y1, x2, y2){
+            return Math.sqrt(Math.pow(x1-x2 ,2)+Math.pow(y1-y2 ,2));
+        }
+        function animate(){
+            requestAnimationFrame(animate);
+            //c.clearRect(-5, -5, window.innerWidth+5, window.innerHeight+5);
+            if(draw){
+                c.lineCap="round";
+                c.lineTo(mouseX, mouseY);
+                
+                if(s=="pen"){
+                    c.strokeStyle="black";
+                    c.lineWidth= 10;
+                }
+                else {
+                    c.strokeStyle="white";
+                    c.lineWidth= 100;
+                }
+                c.stroke()
+            }
+        }
+        animate();
+    </script>
+</html>

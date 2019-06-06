@@ -1,0 +1,149 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+            }
+            canvas{
+                background-color: #212121;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+        <div style="position: fixed; top:10px; right:10px; display: flex; justify-content: center; align-items: center;">
+            <input type="text" id="text" style="border:1px solid white; border-radius: 5px; height:30px;">
+            <button onclick="settext()" style="height:30px; margin-left:10px; background-color: black; border-width: 0px; COLOR:WHITE; border-radius: 5px; font-size: 17px;">CONFERMA</button>
+            
+        </div>
+    </body>
+    <script>
+
+
+
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        function distance(x1, y1, x2, y2){
+            return Math.sqrt(Math.pow(x1-x2 ,2)+Math.pow(y1-y2 ,2));
+        }
+        var first=true;
+        function settext(){
+            text=document.getElementById("text").value;
+            init();
+            if(first){
+                first=false;
+                animate();
+            }
+        }
+        var pixelAvaiable=[];
+        var circleSystem= new CircleSystem();
+        var text="";
+        function init(){
+            c.fillStyle="#212121";
+            c.fillRect(0, 0, canvas.width, canvas.height);
+            c.font = "190px Arial";
+            c.textAlign = "center";
+            c.fillStyle="white";
+            var lineheight = 190;
+            var lines = text.split('\\n');
+            console.log(text);
+            for (var i = 0; i<lines.length; i++)
+                c.fillText(lines[i], canvas.width/2, (canvas.height/2-lines.length/4*lineheight) + (i*lineheight) );
+            //c.fillText(text, innerWidth/2, innerHeight/2);
+            image=c.getImageData(0, 0, canvas.width, canvas.height);
+            pixelAvaiable=[];
+            circleSystem= new CircleSystem();
+            for(var i=0;i<image.data.length; i+=4){
+                if(image.data[i]==image.data[i+1]&&image.data[i]==image.data[i+2]&&image.data[i]==255)pixelAvaiable.push(
+                    {
+                        x:i/4%canvas.width,
+                        y:Math.floor(i/canvas.width/4)
+                    }
+                );
+            }
+        }
+
+        
+        
+
+
+
+        
+        function Circle(x,y){
+            this.x=x;
+            this.y=y;
+            this.radius=0;
+            this.touch=false;
+            this.update=function(all){
+                if(!this.touch){
+                    all.forEach(el => {
+                        if(el!=this){
+                            if(this.x-this.radius<0||this.x+this.radius>canvas.width||this.y-this.radius<0||this.y+this.radius>canvas.height){
+                                this.touch=true;
+                            }
+                            else if(distance(this.x, this.y, el.x, el.y)<=this.radius+el.radius){
+                                this.touch=true;
+                                el.touch=true;
+                            }
+                        }
+                    });
+                }
+                if(!this.touch)this.radius+=1;
+                this.draw();
+            }
+            this.draw=function(){
+                c.beginPath();
+                c.arc(this.x, this.y, this.radius, Math.PI*2, false);
+                c.strokeStyle="white";
+                c.lineWidth=1;
+                c.stroke();
+                c.closePath();
+            }
+        }
+        var nCxF = 300;
+        function CircleSystem(){
+            this.circles=[];
+            this.update=function(){
+                for(i=0; i<nCxF;i++){
+                    var x,y;
+                    var security=1000;
+                    do{
+                        var el = pixelAvaiable[Math.floor(Math.random()*pixelAvaiable.length)];
+                        x= el.x;
+                        y= el.y;
+                        
+                        security--;
+                    }while(this.isInside(x,y)&&security);
+                    if(security)this.circles.push(new Circle(x,y));
+                    else console.error("ATTENZIONE!! SECURITY IN ATTO");
+                }
+                this.draw();
+            }
+            this.draw=function(){
+                this.circles.forEach(circle => {
+                    circle.update(this.circles);
+                });
+            }
+            this.isInside=function(x,y){
+                this.circles.forEach(circle => {
+                    if(distance(circle.x, circle.y,x,y)<circle.radius)return true;
+                });
+                return false;
+            }
+        }
+        function animate(){
+            requestAnimationFrame(animate);
+            c.clearRect(0,0,canvas.width, canvas.height);
+            c.beginPath();
+                        c.arc(535, 1441, 10, Math.PI*2, false);
+                        c.strokeStyle="red";
+                        c.lineWidth=1;
+                        c.stroke();
+                        c.closePath();
+            circleSystem.update();
+        }
+    </script>
+</html>

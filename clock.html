@@ -1,0 +1,150 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+            }
+            canvas{
+                border: 1px solid black;
+                background-color: #000;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+
+
+
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        
+
+        canvas.width = scaleDim(window.innerWidth);
+        canvas.height = scaleDim(window.innerHeight);
+        canvas.style.width = window.innerWidth+"px";
+        canvas.style.height = window.innerHeight+"px";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function scaleDim(x){
+            return x*1.5;
+        }
+
+        var w=10;
+        function Clock(){
+            this.date= new Date();
+            this.h=this.date.getHours();
+            this.m=this.date.getMinutes();
+            this.s=this.date.getSeconds();
+            this.update=function(){
+                this.date= new Date();
+                this.h=this.date.getHours();
+                this.m=this.date.getMinutes();
+                this.s=this.date.getSeconds();
+                this.draw();
+            }
+            this.draw=function(){
+                //secondi
+                c.beginPath();
+                c.arc(0, 0, scaleDim(200), 0, this.s/60*Math.PI*2, false);
+                c.lineWidth=scaleDim(w);
+                c.strokeStyle="#76FF03";
+                c.lineCap="round";
+                c.stroke();
+                c.closePath();
+
+                c.beginPath();
+                c.moveTo(0, 0);
+                c.lineTo(Math.cos(this.s/60*Math.PI*2)*scaleDim((200-(w+5)*3)), Math.sin(this.s/60*Math.PI*2)*scaleDim((200-(w+5)*3)))
+                c.lineWidth=scaleDim(w);
+                c.strokeStyle="#76FF03";
+                c.lineCap="round";
+                c.stroke();
+                c.closePath();
+
+
+
+                //minuti
+                c.beginPath();
+                c.arc(0, 0, scaleDim(200-(w+5)), 0, this.m/60*Math.PI*2, false);
+                c.lineWidth=scaleDim(w);
+                c.strokeStyle="#F8BBD0";
+                c.lineCap="round";
+                c.stroke();
+                c.closePath();
+
+                c.beginPath();
+                c.moveTo(0, 0);
+                c.lineTo(Math.cos(this.m/60*Math.PI*2)*scaleDim((200-(w+20)*3)), Math.sin(this.m/60*Math.PI*2)*scaleDim((200-(w+20)*3)))
+                c.lineWidth=scaleDim(w);
+                c.strokeStyle="#F8BBD0";
+                c.lineCap="round";
+                c.stroke();
+                c.closePath();
+
+
+
+
+                //ore
+                c.beginPath();
+                c.arc(0, 0, scaleDim(200-(w+5)*2), 0, this.h/24*Math.PI*2, false);
+                c.lineWidth=scaleDim(w);
+                c.strokeStyle="#7C4DFF";
+                c.lineCap="round";
+                c.stroke();
+                c.closePath();
+
+                c.beginPath();
+                c.moveTo(0, 0);
+                c.lineTo(Math.cos(this.h/24*Math.PI*2)*scaleDim((200-(w+35)*3)), Math.sin(this.h/24*Math.PI*2)*scaleDim((200-(w+35)*3)))
+                c.lineWidth=scaleDim(w);
+                c.strokeStyle="#7C4DFF";
+                c.lineCap="round";
+                c.stroke();
+                c.closePath();
+
+
+                //pallino centrale
+                c.beginPath();
+                c.arc(0, 0, scaleDim(8), Math.PI*2, false);
+                c.lineWidth=scaleDim(w);
+                c.fillStyle="#212121";
+                c.strokeStyle="white";
+                c.lineWidth=scaleDim(2);
+                c.fill();
+                c.stroke();
+                c.closePath();
+            }
+        }
+        var clock=new Clock();
+        c.translate(canvas.width/2, canvas.height/2);
+        c.rotate(Math.PI*3/2);
+        function animate(){
+            requestAnimationFrame(animate);
+            c.clearRect(-canvas.width, -canvas.height, canvas.width*2, canvas.height*2);
+            clock.update();
+        }
+        animate();
+    </script>
+</html>

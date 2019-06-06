@@ -1,0 +1,196 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+            }
+            canvas{
+                border: 1px solid black;
+                background-color: #212121;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+        <br><br><br><br><br><br>
+        <button onclick="location.reload()">RESTART</button>
+    </body>
+    <script>
+        var canvas=document.querySelector("canvas");
+        canvas.width=500;
+        canvas.height=500;
+        var c= canvas.getContext('2d');
+        /*
+        canvas.addEventListener("mousemove", function(event) {
+            setPositionMouse(event);
+        });
+        var mouseX=innerWidth/2;
+        var mouseY=innerHeight/2;
+        function setPositionMouse(e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        }
+        */
+        var nSquare=20;
+        var length= canvas.width/nSquare;
+        var matrix=[];
+        var cursor= new Cursor(0,0);
+        var stack=[];
+        function Cell(x,y){
+            this.x=x;
+            this.y=y;
+            this.realX=this.x*length;
+            this.realY=this.y*length;
+            this.used=false;
+            this.walls=[true,true,true,true];
+            this.draw=function (){
+
+                
+                //quadrato dietro
+                c.beginPath();
+                c.rect(this.realX, this.realY, length, length);
+                if(this.used){
+                    c.fillStyle="#A3A3A3";
+                    //c.strokeStyle="rgba(0,0,0,0)";
+                }
+                else{
+                     c.fillStyle="rgba(0,0,0,0)";
+                     
+                }
+                c.strokeStyle="#A3A3A3";
+                c.fill();
+                c.stroke();
+                c.closePath();
+
+
+                
+                if(this.walls[0])this.drawWall(this.realX,this.realY  ,   this.realX+length,this.realY);
+                if(this.walls[1])this.drawWall(this.realX+length,this.realY   ,   this.realX+length,this.realY+length);
+                if(this.walls[2])this.drawWall(this.realX+length,this.realY+length    ,   this.realX,this.realY+length);
+                if(this.walls[3])this.drawWall(this.realX,this.realY+length   ,   this.realX, this.realY);
+
+            }
+            this.drawWall= function (x1,y1,x2,y2){
+                c.beginPath()
+                c.strokeStyle="#FFFFEA";
+                c.moveTo(x1, y1);
+                c.lineTo(x2, y2);
+                c.stroke();
+                c.closePath();
+            }
+        }
+        function Cursor(x,y){
+            this.x=x;
+            this.y=y;
+            this.draw = function(){
+                c.beginPath();
+                c.rect(this.x*length, this.y*length, length, length);
+                c.fillStyle="#FCFC62";
+                c.strokeStyle=null;
+                c.fill();
+                c.stroke();
+                c.closePath();
+            }
+            this.update= function(){
+                var direction= this.getDirection();
+                if(stack.length>0 && direction==-1 || (this.x==nSquare-1&& this.y==nSquare-1)){
+                    var ex= stack.pop();
+                    this.x= ex.x;
+                    this.y= ex.y;
+                }
+                else{
+                    this.updateDirection(direction);
+                    stack.push({x: this.x, y:this.y});
+                }
+                this.draw();
+            }
+            this.getDirection = function (direction){
+                if(this.canMove()){
+                    var direction;
+                    var i=0;
+                    do{
+                        i++;
+                        direction=Math.floor(Math.random()*4);
+                    } while(! this.used(direction));
+
+                    return direction;
+                }
+                return -1;
+            }
+            this.canMove=function (){
+                var tmp = false;
+                if(this.x>0 && !matrix[this.y][this.x-1].used) tmp=true;
+                if(this.x<nSquare-1 && !matrix[this.y][this.x+1].used) tmp= true;
+                if(this.y>0 && !matrix[this.y-1][this.x].used) tmp=true;
+                if(this.y<nSquare-1 && !matrix[this.y+1][this.x].used) tmp= true;
+                return tmp;
+            }
+            this.used = function(direction){
+                if(direction==0 && this.y>0)        return !matrix[this.y-1][this.x].used;
+                if(direction==1 && this.x<nSquare-1)  return !matrix[this.y][this.x+1].used;
+                if(direction==2 && this.y<nSquare-1)  return !matrix[this.y+1][this.x].used;
+                if(direction==3 && this.x>0)        return !matrix[this.y][this.x-1].used;
+                return false;
+            }
+            this.updateDirection= function (direction){
+                matrix[this.y][this.x].walls[direction]=false;
+                if(direction==0) {
+                    this.y-=1;
+                    matrix[this.y][this.x].walls[2]=false;
+                }
+                if(direction==1) {
+                    this.x+=1;
+                    matrix[this.y][this.x].walls[3]=false;
+                }
+                if(direction==2) {
+                    this.y+=1;
+                    matrix[this.y][this.x].walls[0]=false;
+                }
+                if(direction==3) {
+                    this.x-=1;
+                    matrix[this.y][this.x].walls[1]=false;
+                }
+                matrix[this.y][this.x].used=true;
+            }
+        }
+        init();
+        var iteration=0;
+        function init(){
+            for( var i=0; i<nSquare; i++){
+                var tmp=[];
+                for(var j=0; j<nSquare; j++){
+                    tmp.push(new Cell(j, i));
+                }
+                matrix.push(tmp);
+            }
+            setTimeout(render,100);
+            matrix[0][0].used=true;
+        }
+        function render(){
+            iteration++;
+            c.clearRect(0,0,innerWidth, innerHeight);
+            for( var i=0; i<matrix.length; i++){
+                for(var j=0; j<matrix[i].length; j++){
+                    matrix[j][i].draw();
+                }
+            }
+            var sent=check();
+            if (sent){
+                cursor.update();
+                setTimeout(render, 0);
+            }
+            else console.log(iteration);
+        }
+        function check(){
+            var tmp= false;
+            matrix.forEach(row => {
+                row.forEach(el=>{
+                    if(el.used==false) tmp= true;
+                });
+            });
+            return tmp;
+        }
+        
+    </script>
+</html>
