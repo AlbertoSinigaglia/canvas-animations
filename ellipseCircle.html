@@ -1,0 +1,97 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+            }
+            canvas{
+                background-color: black;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+
+
+
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        function scaleDim(x){
+            return x*1;
+        }
+        canvas.addEventListener("mousemove", function(event) {
+            setPositionMouse(event);
+        });
+        function setPositionMouse(e) {
+            element.x=(e.clientX-canvas.width/2);
+            element.y=(e.clientY-canvas.height/2);
+        }
+
+
+
+
+
+        canvas.width = scaleDim(window.innerWidth);
+        canvas.height = scaleDim(window.innerHeight);
+        canvas.style.width = window.innerWidth+"px";
+        canvas.style.height = window.innerHeight+"px";
+
+
+
+
+
+
+
+
+        function Element(){
+            this.x=0;
+            this.y=0;
+            this.angle=0;
+            this.dAngle=0.01;
+            this.update=function(){
+                this.angle+=this.dAngle;
+                this.draw();
+            }
+            this.draw=function(){
+                c.save();
+                c.strokeStyle="white";
+                c.translate(this.x, this.y);
+                c.rotate(this.angle);
+                c.beginPath();
+                c.ellipse(0,0,radius,radius/7,0, 0, Math.PI*2, false);
+                c.stroke();
+                c.closePath();
+                c.translate(-this.x, -this.y);
+                c.restore();
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        var radius=200;
+        c.translate(canvas.width/2, canvas.height/2);
+        var element=new Element();
+        function animate(){
+            requestAnimationFrame(animate);
+            c.fillStyle="rgba(0,0,0,.05)";
+            c.fillRect(-canvas.width/2, -canvas.height/2,canvas.width, canvas.height);
+            element.update();
+        }
+        animate();
+    </script>
+</html>

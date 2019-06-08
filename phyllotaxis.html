@@ -37,11 +37,11 @@
         var fix = 5;
         function animate(){
             requestAnimationFrame(animate);
-            var angle=n*137.5;
+            var angle=n*137.7;
             var r=Math.sqrt(n)*fix;
             c.beginPath();
             c.arc(Math.cos(angle*Math.PI/180)*r, Math.sin(angle*Math.PI/180)*r, 3, Math.PI*2, false);
-            c.fillStyle="rgb("+(angle/r-r+256)%256+",100,100)";
+            c.fillStyle="rgb("+(angle%256)+",50,200)";
             c.lineWidth=0;
             c.fill();
             n++;
