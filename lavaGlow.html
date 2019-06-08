@@ -1,0 +1,126 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: black;
+                
+            }
+            canvas{
+                background-image: linear-gradient(#000000,#FFF000, #642054, #000000, #642054, #FFF000, #000000);
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+
+
+
+        var canvas=document.querySelector("canvas");
+        canvas.width=500;
+        canvas.height=500;
+        // canvas.width=window.innerWidth;
+        // canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        function distance(x1, y1, x2, y2){
+            return Math.sqrt(
+                        Math.pow(x1-x2 ,2)
+                            +
+                        Math.pow(y1-y2 ,2)
+                    );
+        }
+
+        var velocity=6;
+        var radius=20;
+        function Bubble(){
+            this.radius=radius*Math.random()+20;
+            this.x=(canvas.width-2*this.radius)*Math.random()+this.radius;
+            this.y=(canvas.height-2*this.radius)*Math.random()+this.radius;
+            this.vel={x:(Math.random()-0.5)*velocity, y:(Math.random()-0.5)*velocity}
+            //this.vel={x:0, y:0}
+            this.update=function (){
+                if(this.x >canvas.width - this.radius || this.x < this.radius) this.vel.x = this.vel.x * -1;
+                if(this.y >canvas.height - this.radius || this.y < this.radius) this.vel.y = this.vel.y * -1;
+                this.x+=this.vel.x;
+                this.y+=this.vel.y;
+                this.draw();
+            }
+            this.draw=function(){
+                c.beginPath();
+                c.arc(this.x, this.y, this.radius, 0, Math.PI*2, false);
+                c.fillStyle="red";
+                c.fill();
+                c.stroke();
+                c.closePath();
+            }
+        }
+        function generateFrame(){
+            bubbles.forEach(el => {
+                el.update();
+            });
+            var imagedata=c.createImageData(canvas.width, canvas.height);
+            var data=imagedata.data;
+            for(var i=0; i<canvas.height; i++){
+                for(var j=0; j<canvas.width*4; j+=4){
+                    var tot=0;
+                    bubbles.forEach(el => {
+                        tot+=el.radius*120/distance(j/4,i,el.x,el.y);
+                    });
+                    /*
+                    data[i*canvas.width*4+j]=data[i*canvas.width*4+j+1]=data[i*canvas.width*4+j+2]=(Math.atan(tot-255/2)+Math.PI/2)*255;
+                    // data[i*canvas.width*4+j]=data[i*canvas.width*4+j+1]=data[i*canvas.width*4+j+2]=
+                    // data[i*canvas.width*4+j]=Math.floor(tot);
+                    // data[i*canvas.width*4+j+1]=Math.floor(tot/2);
+                    // data[i*canvas.width*4+j+2]=Math.floor(tot/4);
+                    data[i*canvas.width*4+j+3]=100;*/
+                    var bar = (Math.atan(tot-255/2)+Math.PI/2)*255;
+                    if(bar>30){
+                        data[i*canvas.width*4+j+3]=0;
+                        data[i*canvas.width*4+j]=data[i*canvas.width*4+j+1]=data[i*canvas.width*4+j+2]=0;
+                    }
+                    else {
+                        data[i*canvas.width*4+j+3]=255;
+                        data[i*canvas.width*4+j]=data[i*canvas.width*4+j+1]=data[i*canvas.width*4+j+2]=bar;
+                    }
+                }
+            }
+            if(tmp){
+                tmp=false;
+                console.log(data);
+            }
+
+            c.putImageData(imagedata, 0, 0);
+        }
+        var tmp=true;
+
+
+        var bubbles=[new Bubble(), new Bubble(), new Bubble(), new Bubble()];
+        function animate(){
+            requestAnimationFrame(animate);
+            c.clearRect(0,0,canvas.width, canvas.height);
+
+
+
+
+            var grd = c.createLinearGradient(0, 0, canvas.width, 0);
+            grd.addColorStop(0, "#000000");
+            grd.addColorStop("1", "#642054");
+
+
+            c.fillStyle = grd;
+            c.fillRect(0, 0, canvas.width, canvas.height);
+
+
+
+
+            generateFrame();
+        }
+        animate();
+    </script>
+</html>
