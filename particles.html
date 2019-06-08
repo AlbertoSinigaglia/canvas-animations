@@ -37,13 +37,13 @@
                 this.radius=20;
                 this.dx=(Math.random()-0.5)*10;
                 this.dy=(Math.random()-0.6)*10;
-                this.r=r;
-                this.g=g;
-                this.b=b;
+                // this.r=r;
+                // this.g=g;
+                // this.b=b;
                 //per modalità psicadelica
-                // this.r=Math.floor(Math.random()*255);
-                // this.g=Math.floor(Math.random()*255);
-                // this.b=Math.floor(Math.random()*255);
+                this.r=Math.floor(Math.random()*255);
+                this.g=Math.floor(Math.random()*255);
+                this.b=Math.floor(Math.random()*255);
                 this.update=function(){
                     this.x+=this.dx;
                     this.y+=this.dy;
