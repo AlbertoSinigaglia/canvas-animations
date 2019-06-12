@@ -1,0 +1,90 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+            }
+            canvas{
+                border: 1px solid black;
+                background-color: #212121;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+
+
+
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        function generatePoints(n){
+            var angle= Math.PI*2/n;
+            var array=[];
+            for(var i=0; i<n;i++)array.push({x: Math.cos(angle*i), y: Math.sin(angle*i), deg:angle*i});
+            return array;
+        }
+        function Hexagon(x,y, radius){
+            this.limit=y;
+            this.radius=radius;
+            this.x=x;
+            this.y=y;
+            this.points=generatePoints(6);
+            this.angle=0;
+            this.velocity=0.01;
+            this.gravity=this.velocity/120;
+            this.update=function(){
+                this.angle+=this.velocity;
+                var max={x:0, y:0};
+                this.points.forEach(p => {
+                    p.x=Math.cos(p.deg+this.angle);
+                    p.y=Math.sin(p.deg+this.angle);
+                });
+                this.points.forEach(p => { if(max.y<p.y)max=p;});
+                this.y=this.limit-max.y*this.radius-floor.height;
+                if(this.x>canvas.width||this.x<0){
+                    this.velocity*=-1;
+                }
+                if(this.x+max.x*this.radius>this.x)this.velocity-=this.gravity;
+                else this.velocity+=this.gravity;
+                this.x+=max.y*this.velocity*100;
+                this.draw();
+            }
+            this.draw=function(){
+                c.beginPath();
+                c.strokeStyle="white";
+                c.fillStyle="white";
+                c.lineWidth=0;
+                c.moveTo(this.x+this.points[0].x*this.radius, this.y+this.points[0].y*this.radius);
+                this.points.forEach(p => {
+                    c.lineTo(this.x+p.x*this.radius, this.y+p.y*this.radius);
+                    
+                    c.stroke();
+                });
+                c.lineTo(this.x+this.points[0].x*this.radius, this.y+this.points[0].y*this.radius);
+                c.stroke();
+                
+                c.fill();
+                c.closePath();
+            }
+        }
+        var hex=new Hexagon(0, canvas.height, 100);
+        var floor={height:10};
+        function animate(){
+            requestAnimationFrame(animate);
+            c.fillStyle="rgba(0,0,0,.07)";
+            c.fillRect(0,0,canvas.width, canvas.height);
+            hex.update();
+            c.beginPath();
+            c.fillStyle="grey";
+            c.fillRect(0, canvas.height-floor.height, canvas.width, floor.height);
+            c.fill();
+            c.closePath();
+        }
+        animate();
+    </script>
+</html>

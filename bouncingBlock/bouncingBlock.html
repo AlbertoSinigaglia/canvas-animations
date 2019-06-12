@@ -1,0 +1,98 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+            }
+            canvas{
+                border: 1px solid black;
+                background-color: #212121;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        
+        var clack = document.createElement("audio");
+        clack.src="collision.mov";
+        clack.setAttribute("preload", "auto");
+        clack.setAttribute("controls", "none");
+        clack.style.display = "none";
+
+        function impact(b1, b2){
+            return ((b1.mass-b2.mass)*b1.vel+(2*b2.mass*b2.vel))/(b1.mass+b2.mass);
+        }
+        var collision=0;
+        function Block(x, y, mass, vel, width){
+            this.x=x;
+            this.y=y;
+            this.mass=mass;
+            this.width=width;
+
+            this.vel=vel;
+            this.update=function(other){
+                //se si sbattesse sul muro
+                if(other.x+other.vel<0){
+                    other.vel*=-1;
+                    console.log(++collision);
+                    clack.cloneNode().play();
+                }
+
+                //se non c'è una collisione
+                if(this.x-other.x>other.width){
+                    this.x+=this.vel;
+                    other.x+=other.vel;
+                }
+                //se c'è collisione
+                else{
+                    var v1= impact(this,other);
+                    var v2= impact(other, this);
+                    this.vel=v1;
+                    other.vel=v2;
+                    if(other.x+other.vel<0)other.x=0;
+                    else other.x+=other.vel;
+                    this.x+=this.vel;
+                    
+                    console.log(++collision);
+                    clack.cloneNode().play();
+                }
+                this.draw();
+                other.draw();
+            }
+            this.draw=function(){
+                c.beginPath();
+                c.fillStyle="red";
+                c.fillRect(this.x, this.y+maxSize-this.width, this.width, this.width);
+                c.fill();
+                c.closePath();
+            }
+        }
+        var startingVel=2;
+        var maxSize=150;
+        var floor=20;
+        var bigBlock=new Block(canvas.width-120, canvas.height-maxSize-floor, 100, -startingVel, 100);
+        var smallBlock=new Block(100, canvas.height-maxSize-floor, 1, 0, 20);
+        function animate(){
+            requestAnimationFrame(animate);
+            c.clearRect(0,0, canvas.width, canvas.height);
+
+
+
+            c.beginPath();
+            c.fillStyle="white";
+            c.fillRect(0, canvas.height-floor, canvas.width, 10);
+            c.fill();
+            c.closePath();
+            bigBlock.update(smallBlock);
+        }
+        animate();
+    </script>
+</html>
