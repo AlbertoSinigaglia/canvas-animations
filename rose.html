@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+            }
+            canvas{
+                border: 1px solid black;
+                background-color: #000;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+
+
+
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        
+
+
+
+
+
+
+
+        var n=3;
+        var d=8;
+        var maxAngle=Math.PI*2*d;
+        var angle=0;
+        var def=0.014;
+        var radius=250;
+        c.translate(canvas.width/2, canvas.height/2);
+
+
+        c.fillStyle="white";
+        c.strokeStyle="white";
+        
+        function animate(){
+            requestAnimationFrame(animate);
+            if(angle<maxAngle||true){
+                var x= Math.cos(n/d * angle)*Math.cos(angle)* radius;
+                var y= Math.cos(n/d * angle)*Math.sin(angle)* radius;
+                angle+=def;
+                
+                c.beginPath();
+                c.arc(x, y, 2, 0, Math.PI*2, false);
+                c.fill();
+                c.stroke();
+                c.closePath();
+            }
+        }
+        animate();
+    </script>
+</html>
