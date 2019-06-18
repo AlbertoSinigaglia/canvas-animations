@@ -37,3 +37,50 @@ Simple animation spawning peace of circle in a matrix; you can change the number
 ```javascript
 var nCircle=100;
 ```
+
+### CircularMotion
+Simple animation spawning small circle around the mouse with random circular trajectories 
+
+### Clock
+Simple clock with AppleWatch's style
+
+### CollisionDetection
+Simple animation spawning some ball with random speed, where the collision is managed by elastic shock formula
+
+### EllipseCircle
+Simple animation spawning a ellipse which is rotating around the pointer
+
+### FillCircle
+Simple animation spawning random circles which try to cover all the monitor
+
+### FillCircleImage
+Simple animation spawning random circles in a photo trying to cover it with the color of the photo in that point
+
+### FillCircleText
+Simple animation spawning small circle inside a text (top right textarea, you can have a new line with \n)
+
+### Fireworks
+Simple animation spawning some fireworks from the bottom of the monitor
+
+### FlappyBird
+Simple implementation of the famous game (but with simple graphic elements)
+
+### Follower
+Simple animation spawning a circle with follow the mouse, but smoothly
+
+### GraphicFunction
+Simple animation whitch draw a ellipse each frame ina  position determined by a function, wich can be modyfy by changing those lines
+```javascript
+var a = 3.085;
+var b = -1.504;
+var c = 0.111;
+var d = -4.393;
+var step = 0.0002;
+```
+
+### GRavity
+Simple animation spawning some balls with a mass, and emulating the gravity, whitch can be changed by modifying
+```javascript
+this.gravity=0.6;
+this.friction=0.6;
+```
