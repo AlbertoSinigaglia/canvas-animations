@@ -19,3 +19,21 @@ Simple "mouse follower" drawing a line each n degrees, you can change by changin
 var dot= new Dot(360);
 ```
 This is one of the first, so there is some bath Math inside, there is 4938749274 way better to do it.
+
+### Breakout
+Simple 80' breakout game, you can change number of row block by changing this line, with the number you want
+```javascript
+var nRowBriks=3;
+```
+
+### Circle & Circle2
+Simple animation where some line spawn inside a circle, better Circle2
+
+### CircleAnimation
+Simple animation where balls near the mouse increase their radius; there are a lot of property that can be changed in the code if you want
+
+### CircleLibyrinth
+Simple animation spawning peace of circle in a matrix; you can change the number of circle per line by changing this line with the number you want
+```javascript
+var nCircle=100;
+```
