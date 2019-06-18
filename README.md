@@ -10,3 +10,12 @@ i don't know how licence works, so you can also abuse of it, i'll don't know wha
 
 
 PS: the code is not optimized in any way, at the same moment that it start working, i haven't worked on it anymore, sorry <3
+
+##Projects "simple" description
+
+###AngleLine
+Simple "mouse follower" drawing a line each n degrees, you can change by changing 360 with the number of line you want
+```javascript
+var dot= new Dot(360);
+```
+This is one of the first, so there is some bath Math inside, there is 4938749274 way better to do it.
