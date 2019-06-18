@@ -1,0 +1,66 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #212121;
+            }
+            canvas{
+                background-color: transparent;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+
+
+        function scaleDim(x){
+            return x*2;
+        }
+        var canvas=document.querySelector("canvas");
+
+        canvas.width = scaleDim(window.innerHeight);
+        canvas.height = scaleDim(window.innerHeight);
+        canvas.style.width = window.innerHeight+"px";
+        canvas.style.height = window.innerHeight+"px";
+
+        var c= canvas.getContext('2d');
+
+        var color="white";
+        var i=0;
+        var nCircle=100;
+        var radius=canvas.width/nCircle/2;
+        c.lineWidth=2;
+        function animate(){
+            requestAnimationFrame(animate);
+            color="hsl("+Math.random()*360+",50%, 50%)";
+            if(i<nCircle*nCircle){
+                var first= Math.floor(Math.random()*4);
+                var second= Math.floor(Math.random()*4);
+                do {second= Math.floor(Math.random()*4);} while(first==second);
+                c.beginPath();
+                c.strokeStyle=color;
+                c.arc(i%nCircle*radius*2+radius, Math.floor(i/nCircle)*radius*2+radius, radius, first*Math.PI/2, first*Math.PI/2+Math.PI/2, false);
+                c.stroke();
+                c.closePath();
+                if(Math.round(Math.random())){
+                    color="hsl("+Math.random()*360+",50%, 50%)";
+                    c.beginPath();
+                    c.strokeStyle=color;
+                    c.arc(i%nCircle*radius*2+radius, Math.floor(i/nCircle)*radius*2+radius, radius, second*Math.PI/2, second*Math.PI/2+Math.PI/2, false);
+                    c.stroke();
+                    c.closePath();
+                }
+                i++;
+
+            }
+        }
+        animate();
+    </script>
+</html>

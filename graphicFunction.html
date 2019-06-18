@@ -1,0 +1,73 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+            }
+            canvas{
+                border: 1px solid black;
+                background-color: #000;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+
+
+
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var ctx= canvas.getContext('2d');
+
+
+
+        var a = 3.085;
+        var b = -1.504;
+        var c = 0.111;
+        var d = -4.393;
+        var step = 0.0002;
+        function Point(x,y){
+            this.x=x; 
+            this.y=y;
+            this.update=function(){
+                var X = (Math.sin(a * this.y) - Math.cos(b * this.x))*200;
+                var Y = (Math.sin(c * this.x) - Math.cos(d * this.y))*200;
+                this.x+=step;
+                this.y+=step;
+
+                
+                // a+=step;
+                // b+=step;
+                // c+=step;
+                // d+=step;
+
+
+                this.draw(X, Y);
+            }
+            this.draw=function(X, Y){
+                ctx.beginPath();
+                ctx.ellipse(X, Y, canvas.width/10, canvas.width/80,0,0, Math.PI*2, false);
+                ctx.strokeStyle="rgba(255,255,255,.005)";
+                ctx.stroke();
+                ctx.closePath();
+            }
+        }
+
+
+
+        var t=-0.38;
+        ctx.translate(canvas.width/2, canvas.height/2);
+
+        var point=new Point(Math.random()*Math.PI, Math.random()*Math.PI)
+        function animate(){
+            requestAnimationFrame(animate);
+            t+=0.1;
+            point.update();
+        }
+        animate();
+    </script>
+</html>
