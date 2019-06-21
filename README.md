@@ -11,6 +11,12 @@ i don't know how licence works, so you can also abuse of it, i'll don't know wha
 
 PS: the code is not optimized in any way, at the same moment that it start working, i haven't worked on it anymore, sorry <3
 
+## 10Print
+Simple animation spawning some slashes, changing randomically the direction ("\", "/"). You can change the number of the shashes by changing this line.
+```javascript
+var nSlash=70;
+```
+
 ## AngleLine
 Simple "mouse follower" drawing a line each n degrees, you can change by changing 360 with the number of line you want
 ```javascript
