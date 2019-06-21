@@ -1,0 +1,115 @@
+
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+                background-color: white;
+                display: flex;
+                align-content: center;
+                align-items: center;
+                justify-content: center;
+            }
+            canvas{
+                background-color: black;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+
+
+
+        var canvas=document.querySelector("canvas");
+        canvas.width=Math.max(window.innerHeight, window.innerWidth);
+        canvas.height=canvas.width;
+        var c= canvas.getContext('2d');
+        if (!Array.prototype.last){
+            Array.prototype.last = function(){
+                return this[this.length - 1];
+            };
+        };
+
+
+
+
+        function Generator(x, y){
+            this.x=x; 
+            this.y=y;
+            this.cr=0;
+            this.current={x:0,y:0};
+            this.history=[];
+            this.update=function(){
+                this.cr+=Math.max(this.x, this.y)/50;
+                this.draw();
+            }
+            this.draw=function(){
+                // console.log(this.x*wSquare+wSquare/2, this.y*wSquare+wSquare/2, wSquare/2, 0, Math.PI*2, false);
+                c.beginPath();
+                c.strokeStyle="white";
+                c.arc(this.x*wSquare+wSquare/2, this.y*wSquare+wSquare/2, rwSquare/2, 0, Math.PI*2, false);
+                c.stroke();
+                c.closePath();
+                c.beginPath();
+                c.save();
+                c.translate(this.x*wSquare+wSquare/2,this.y*wSquare+wSquare/2);
+                c.strokeStyle="red";
+                c.fillStyle="red";
+                this.current={x:(rwSquare/2)*Math.cos(this.cr),y:(rwSquare/2)*Math.sin(this.cr)};
+                this.history.push(this.current);
+                c.arc((rwSquare/2)*Math.cos(this.cr), (rwSquare/2)*Math.sin(this.cr), 5, 0, Math.PI*2, false);
+                c.fill();
+                c.restore();
+                c.closePath();
+            }
+        }
+        function generateGraph(){
+            for(var i=0; i< cols.length; i++){
+                for(var j=0; j< rows.length; j++){
+                    c.beginPath();
+                    c.save();
+                    c.translate( rows[j].x*wSquare+wSquare/2 , cols[i].y*wSquare+wSquare/2 );
+
+                    /*
+                    for(var k=0; k<rows[j].history.length; k++){
+                        c.arc(rows[j].history[k].x, cols[i].history[k].y, 5, 0, Math.PI*2, false);
+                        c.fillStyle="yellow";
+                        c.fill();
+                    }
+                    */
+                    c.arc(rows[j].history.last().x, cols[i].history.last().y, 1, 0, Math.PI*2, false);
+                    c.fillStyle="yellow";
+                    c.fill();
+
+                    c.restore();
+                    c.closePath();
+                }
+            }
+        }
+       
+        var nSquare = 10;
+        var wSquare=canvas.width/(nSquare);
+        var rwSquare = wSquare-10;
+        var rows=[];
+        var cols=[]
+        for(var i=1; i<nSquare; i++) cols.push(new Generator(0, i));
+        for(var i=1; i<nSquare; i++) rows.push(new Generator(i, 0));
+        function animate(){
+            requestAnimationFrame(animate);
+            c.clearRect(0,0,canvas.width, wSquare);
+            c.clearRect(0,0,wSquare, canvas.height);
+            rows.forEach(g => {
+                g.update();
+            });
+            cols.forEach(g => {
+                g.update();
+            });
+            generateGraph();
+            //generateLine();
+        }
+        animate();
+    </script>
+</html>
