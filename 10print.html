@@ -1,0 +1,47 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+            }
+            canvas{
+                background-color: black;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+
+
+
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        var nSlash=70;
+        var wSlash=canvas.width/nSlash;
+        var totSlash = Math.ceil(canvas.height/wSlash)*nSlash;
+        var i= 0;
+        c.strokeStyle="white";
+        c.lineWidth=2;
+        function animate(){
+            if(i<totSlash){
+                requestAnimationFrame(animate);
+                var r = Math.round(Math.random());
+                var x1 = r*wSlash;
+                var x2 = wSlash-x1;
+                c.beginPath();
+                c.moveTo(i%nSlash*wSlash+x1, Math.floor(i/nSlash)*wSlash);
+                c.lineTo(i%nSlash*wSlash+x2, (Math.floor(i/nSlash)+1)*wSlash);
+                c.stroke();
+                c.closePath();
+                i++;
+            }
+            else console.log("finito");
+        }
+        animate();
+    </script>
+</html>
