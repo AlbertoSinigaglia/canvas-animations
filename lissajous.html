@@ -6,33 +6,51 @@
                 padding:0px;
                 margin: 0px;
                 background-color: white;
-                display: flex;
+                /*display: flex;
                 align-content: center;
                 align-items: center;
-                justify-content: center;
-            }
-            canvas{
+                justify-content: center;*/
                 background-color: black;
             }
+            canvas{
+                position: absolute;
+                top:0px;
+                left:0px;
+            }
+            .l2{z-index: 9999}
         </style>
     </head>
     <body>
-        <canvas></canvas>
+        <canvas id="l1"></canvas>
+        <canvas id="l2"></canvas>
     </body>
     <script>
 
 
 
-        var canvas=document.querySelector("canvas");
+        var canvas=document.getElementById("l1");
         canvas.width=Math.max(window.innerHeight, window.innerWidth);
         canvas.height=canvas.width;
         var c= canvas.getContext('2d');
+
+
+        var L2=document.getElementById("l2");
+        L2.width=Math.max(window.innerHeight, window.innerWidth);
+        L2.height=L2.width;
+        var l2= L2.getContext('2d');
+
+
+
         if (!Array.prototype.last){
             Array.prototype.last = function(){
                 return this[this.length - 1];
             };
         };
-
+        if (!Array.prototype.first){
+            Array.prototype.first = function(){
+                return this[0];
+            };
+        };
 
 
 
@@ -89,7 +107,30 @@
                 }
             }
         }
-       
+
+        function generateLine(){
+            l2.strokeStyle="green";
+            rows.forEach(r => {
+                l2.beginPath();
+                l2.save();
+                l2.translate(r.x*wSquare+wSquare/2,r.y*wSquare+wSquare/2);
+                l2.moveTo( r.history.last().x, -wSquare/2);
+                l2.lineTo( r.history.last().x, L2.height-wSquare/2);
+                l2.stroke();
+                l2.restore();
+                l2.closePath();
+            });
+            cols.forEach(c => {
+                l2.beginPath();
+                l2.save();
+                l2.translate(c.x*wSquare+wSquare/2,c.y*wSquare+wSquare/2);
+                l2.moveTo( -wSquare/2,  c.history.last().y);
+                l2.lineTo( L2.width -wSquare/2,  c.history.last().y);
+                l2.stroke();
+                l2.restore();
+                l2.closePath();
+            });
+        }
         var nSquare = 10;
         var wSquare=canvas.width/(nSquare);
         var rwSquare = wSquare-10;
@@ -100,6 +141,7 @@
         function animate(){
             requestAnimationFrame(animate);
             c.clearRect(0,0,canvas.width, wSquare);
+            l2.clearRect(0,0,L2.width, L2.height);
             c.clearRect(0,0,wSquare, canvas.height);
             rows.forEach(g => {
                 g.update();
@@ -108,7 +150,7 @@
                 g.update();
             });
             generateGraph();
-            //generateLine();
+            generateLine();
         }
         animate();
     </script>
