@@ -6,10 +6,9 @@
                 padding:0px;
                 margin: 0px;
                 background-color: white;
-                /*display: flex;
-                align-content: center;
+                display: flex;
                 align-items: center;
-                justify-content: center;*/
+                justify-content: center;
                 background-color: black;
             }
             canvas{
@@ -21,21 +20,25 @@
         </style>
     </head>
     <body>
-        <canvas id="l1"></canvas>
-        <canvas id="l2"></canvas>
+        <div id="container" style="position:relative">
+            <canvas id="l1"></canvas>
+            <canvas id="l2"></canvas>
+        </div>
+        
     </body>
     <script>
 
 
 
         var canvas=document.getElementById("l1");
-        canvas.width=Math.max(window.innerHeight, window.innerWidth);
+        canvas.width=Math.min(window.innerHeight, window.innerWidth);
         canvas.height=canvas.width;
         var c= canvas.getContext('2d');
-
+        var cont=document.getElementById("container");
+        cont.style.height=cont.style.width=canvas.width;
 
         var L2=document.getElementById("l2");
-        L2.width=Math.max(window.innerHeight, window.innerWidth);
+        L2.width=Math.min(window.innerHeight, window.innerWidth);
         L2.height=L2.width;
         var l2= L2.getContext('2d');
 
@@ -54,7 +57,8 @@
 
 
 
-        function Generator(x, y){
+        function Generator(x, y, color){
+            this.color=color;
             this.x=x; 
             this.y=y;
             this.cr=0;
@@ -98,8 +102,9 @@
                         c.fill();
                     }
                     */
+                    c.fillStyle="hsl("+((rows[j].color+cols[i].color)/2)+" ,100%, 50%)";
                     c.arc(rows[j].history.last().x, cols[i].history.last().y, 1, 0, Math.PI*2, false);
-                    c.fillStyle="yellow";
+                    //c.fillStyle="yellow";
                     c.fill();
 
                     c.restore();
@@ -109,7 +114,7 @@
         }
 
         function generateLine(){
-            l2.strokeStyle="green";
+            l2.strokeStyle="white";
             rows.forEach(r => {
                 l2.beginPath();
                 l2.save();
@@ -136,8 +141,8 @@
         var rwSquare = wSquare-10;
         var rows=[];
         var cols=[]
-        for(var i=1; i<nSquare; i++) cols.push(new Generator(0, i));
-        for(var i=1; i<nSquare; i++) rows.push(new Generator(i, 0));
+        for(var i=1; i<nSquare; i++) cols.push(new Generator(0, i, 360/nSquare*i));
+        for(var i=1; i<nSquare; i++) rows.push(new Generator(i, 0, 360/nSquare*i));
         function animate(){
             requestAnimationFrame(animate);
             c.clearRect(0,0,canvas.width, wSquare);
