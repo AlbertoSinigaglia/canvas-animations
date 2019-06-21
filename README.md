@@ -102,6 +102,12 @@ Simple animation spawning some ponts outside the canvas, and connecting if they'
 ```javascript
 var tollerance = 90;
 ```
+## Lissajous
+Simple animation spawning some points in the intersection of the circles on top and on the left. You can change the number of circles by changing
+```javascript
+var nSquare = 10;
+```
+See more on https://it.wikipedia.org/wiki/Figura_di_Lissajous
 
 ## Paint
 Sorry, i've MacBook, and i need a simple paint some times... so i created this, vary useless maybe, but usefull for me :-)
