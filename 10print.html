@@ -21,7 +21,15 @@
         canvas.width=window.innerWidth;
         canvas.height=window.innerHeight;
         var c= canvas.getContext('2d');
-        var nSlash=70;
+        canvas.width = 2*window.innerWidth;
+        canvas.height = 2*window.innerHeight;
+        canvas.style.width = window.innerWidth+"px";
+        canvas.style.height = window.innerHeight+"px";
+
+
+
+
+        var nSlash=200;
         var wSlash=canvas.width/nSlash;
         var totSlash = Math.ceil(canvas.height/wSlash)*nSlash;
         var i= 0;
