@@ -12,7 +12,7 @@ i don't know how licence works, so you can also abuse of it, i'll don't know wha
 PS: the code is not optimized in any way, at the same moment that it start working, i haven't worked on it anymore, sorry <3
 
 ## 10Print
-Simple animation spawning some slashes, changing randomically the direction ("\", "/"). You can change the number of the shashes by changing this line.
+Simple animation which spawns some slashes, changing randomically the direction ("\", "/"). You can change the number of the shashes by changing this line.
 ```javascript
 var nSlash=70;
 ```
@@ -40,40 +40,40 @@ Simple animation where some line spawn inside a circle, better Circle2
 Simple animation where balls near the mouse increase their radius; there are a lot of property that can be changed in the code if you want
 
 ## CircleLibyrinth
-Simple animation spawning peace of circle in a matrix; you can change the number of circle per line by changing this line with the number you want
+Simple animation which spawns peace of circle in a matrix; you can change the number of circle per line by changing this line with the number you want
 ```javascript
 var nCircle=100;
 ```
 
 ## CircularMotion
-Simple animation spawning small circle around the mouse with random circular trajectories 
+Simple animation which spawns small circle around the mouse with random circular trajectories 
 
 ## Clock
 Simple clock with AppleWatch's style
 
 ## CollisionDetection
-Simple animation spawning some ball with random speed, where the collision is managed by elastic shock formula
+Simple animation which spawns some ball with random speed, where the collision is managed by elastic shock formula
 
 ## EllipseCircle
-Simple animation spawning a ellipse which is rotating around the pointer
+Simple animation which spawns a ellipse which is rotating around the pointer
 
 ## FillCircle
-Simple animation spawning random circles which try to cover all the monitor
+Simple animation which spawns random circles which try to cover all the monitor
 
 ## FillCircleImage
-Simple animation spawning random circles in a photo trying to cover it with the color of the photo in that point
+Simple animation which spawns random circles in a photo trying to cover it with the color of the photo in that point
 
 ## FillCircleText
-Simple animation spawning small circle inside a text (top right textarea, you can have a new line with \n)
+Simple animation which spawns small circle inside a text (top right textarea, you can have a new line with \n)
 
 ## Fireworks
-Simple animation spawning some fireworks from the bottom of the monitor
+Simple animation which spawns some fireworks from the bottom of the monitor
 
 ## FlappyBird
 Simple implementation of the famous game (but with simple graphic elements)
 
 ## Follower
-Simple animation spawning a circle with follow the mouse, but smoothly
+Simple animation which spawns a circle with follow the mouse, but smoothly
 
 ## GraphicFunction
 Simple animation whitch draw a ellipse each frame ina  position determined by a function, wich can be modyfy by changing those lines
@@ -86,7 +86,7 @@ var step = 0.0002;
 ```
 
 ## Gravity
-Simple animation spawning some balls with a mass, and emulating the gravity, whitch can be changed by modifying
+Simple animation which spawns some balls with a mass, and emulating the gravity, whitch can be changed by modifying
 ```javascript
 this.gravity=0.6;
 this.friction=0.6;
@@ -97,19 +97,19 @@ Simple animation representing a possible labyrinth from the top left corner to t
 https://en.wikipedia.org/wiki/Maze_generation_algorithm
 
 ## LavaGlow
-Simple animation spawning some balls with random radius in a square, and used to mimic "lava lamp". You can change the size of the square from, taking in account that the algorithm used is O(n*n) where n = pizel of the square, each frame.
+Simple animation which spawns some balls with random radius in a square, and used to mimic "lava lamp". You can change the size of the square from, taking in account that the algorithm used is O(n*n) where n = pizel of the square, each frame.
 ```javascript
 canvas.width=500;
 canvas.height=500;
 ```
 
 ## LineConnected
-Simple animation spawning some ponts outside the canvas, and connecting if they're close to someone less than a given distance, which can be changed by changing
+Simple animation which spawns some ponts outside the canvas, and connecting if they're close to someone less than a given distance, which can be changed by changing
 ```javascript
 var tollerance = 90;
 ```
 ## Lissajous
-Simple animation spawning some points in the intersection of the circles on top and on the left. You can change the number of circles by changing
+Simple animation which spawns some points in the intersection of the circles on top and on the left. You can change the number of circles by changing
 ```javascript
 var nSquare = 10;
 ```
@@ -119,7 +119,7 @@ See more on https://it.wikipedia.org/wiki/Figura_di_Lissajous
 Sorry, i've MacBook, and i need a simple paint some times... so i created this, vary useless maybe, but usefull for me :-)
 
 ## Particles
-Simple animation spawning some balls where you click on the screen. Commenting the uncommented lines of those, and uncomment commented lines, inside Particle, you will get a more "peacefull" result
+Simple animation which spawns some balls where you click on the screen. Commenting the uncommented lines of those, and uncomment commented lines, inside Particle, you will get a more "peacefull" result
 ```javascript
 // this.r=r;
 // this.g=g;
@@ -130,7 +130,7 @@ this.b=Math.floor(Math.random()*255);
 ```
 
 ## Phyllotaxis
-Simple animation spawning some points in order to create a Phyllotaxy. You can change the angle in order to get different results
+Simple animation which spawns some points in order to create a Phyllotaxy. You can change the angle in order to get different results
 ```javascript
 //one of those
 var angle=n*137.7;
@@ -148,7 +148,7 @@ Simple animation representig the 2D casting in a 3D view, based on the distance.
 Unfortunately, i wasn't able to take out the fisheye effect...
 
 ## Rose
-Simple animation spawning some points in the canvas in order to generate roses. The result depends on the value of the following 2 varables
+Simple animation which spawns some points in the canvas in order to generate roses. The result depends on the value of the following 2 varables
 ```javascript
 var n=3;
 var d=8;
@@ -162,13 +162,13 @@ setTimeout(animate,200);
 ```
 
 ## SpiderWeb && SpiderWeb2
-Simple animation spawning some random points on the screen, and connect with the pointer if is close enougth. This distance can be changed by modifying
+Simple animation which spawns some random points on the screen, and connect with the pointer if is close enougth. This distance can be changed by modifying
 ```javascript
 var tollerance = 300;
 ```
 
 ## Starship
-Simple animation spawning some random points in the center of the screen, in order to create Star Trek starship effect, and the speed change based on the distance of the mouse from the left side of the canvas
+Simple animation which spawns some random points in the center of the screen, in order to create Star Trek starship effect, and the speed change based on the distance of the mouse from the left side of the canvas
 
 ## SpiderWeb && SpiderWeb2
 Simple animation which represent times table: you can change the number of points used on the circle by changing the first value of this line (take in account that every frame has to generate that number of line, so a big number can cause lag)
@@ -177,7 +177,7 @@ var tt = new TimesTable(200, Math.min(canvas.height-100, canvas.width-100)/2);
 ```
 
 ## WalkingHexagon
-Simple animation spawning a Hexagon and makes it walk. Working with every 2D polygon. The number of vertices can be changed by changing this line with the number you prefer
+Simple animation which spawns a Hexagon and makes it walk. Working with every 2D polygon. The number of vertices can be changed by changing this line with the number you prefer
 ```javascript
 this.points=generatePoints(6);
 ```
