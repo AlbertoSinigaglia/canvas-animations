@@ -170,6 +170,12 @@ var tollerance = 300;
 ## Starship
 Simple animation spawning some random points in the center of the screen, in order to create Star Trek starship effect, and the speed change based on the distance of the mouse from the left side of the canvas
 
+## SpiderWeb && SpiderWeb2
+Simple animation which represent times table: you can change the number of points used on the circle by changing the first value of this line (take in account that every frame has to generate that number of line, so a big number can cause lag)
+```javascript
+var tt = new TimesTable(200, Math.min(canvas.height-100, canvas.width-100)/2);
+```
+
 ## WalkingHexagon
 Simple animation spawning a Hexagon and makes it walk. Working with every 2D polygon. The number of vertices can be changed by changing this line with the number you prefer
 ```javascript
