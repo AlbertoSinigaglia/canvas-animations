@@ -1,0 +1,69 @@
+
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+                background-color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: black;
+            }
+            canvas{
+                position: absolute;
+                top:0px;
+                left:0px;
+            }
+            .l2{z-index: 9999}
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+        
+    </body>
+    <script>
+
+
+
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+
+        function TimesTable(points, radius){
+            this.points=points;
+            this.radius=radius;
+            this.m=2;
+            this.update=function(){
+                this.m+=0.01;
+                this.draw();
+            }
+            this.draw=function(){
+                c.beginPath();
+                c.arc(0,0,this.radius, 0, Math.PI*2, false);
+                c.stroke();
+                c.closePath();
+                var step= Math.PI*2/this.points;
+                c.strokeStyle="hsl("+(this.m*this.m%360)+",50%,50%)";
+                for(var i=0; i<this.points; i++){
+                    c.beginPath();
+                    c.moveTo(Math.cos(i*step)*this.radius, Math.sin(i*step)*this.radius);
+                    c.lineTo(Math.cos(i*step*this.m)*this.radius, Math.sin(i*step*this.m)*this.radius);
+                    c.stroke();
+                    c.closePath();
+                }
+            }
+        }
+        var tt = new TimesTable(200, Math.min(canvas.height-100, canvas.width-100)/2);
+        c.translate(canvas.width/2, canvas.height/2);
+        c.strokeStyle="white";
+        function animate(){
+            requestAnimationFrame(animate);
+            c.clearRect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
+            tt.update();
+        }
+        animate();
+    </script>
+</html>
