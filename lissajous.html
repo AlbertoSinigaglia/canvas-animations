@@ -31,17 +31,21 @@
 
 
         var canvas=document.getElementById("l1");
-        canvas.width=Math.min(window.innerHeight, window.innerWidth);
+        canvas.width=Math.max(window.innerHeight, window.innerWidth)*2;
         canvas.height=canvas.width;
         var c= canvas.getContext('2d');
         var cont=document.getElementById("container");
         cont.style.height=cont.style.width=canvas.width;
 
         var L2=document.getElementById("l2");
-        L2.width=Math.min(window.innerHeight, window.innerWidth);
+        L2.width=Math.max(window.innerHeight, window.innerWidth)*2;
         L2.height=L2.width;
         var l2= L2.getContext('2d');
 
+        canvas.style.width = Math.max(window.innerHeight, window.innerWidth)+"px";
+        canvas.style.height = Math.max(window.innerHeight, window.innerWidth)+"px";
+        L2.style.width = Math.max(window.innerHeight, window.innerWidth)+"px";
+        L2.style.height = Math.max(window.innerHeight, window.innerWidth)+"px";
 
 
         if (!Array.prototype.last){
@@ -136,7 +140,7 @@
                 l2.closePath();
             });
         }
-        var nSquare = 10;
+        var nSquare = 20;
         var wSquare=canvas.width/(nSquare);
         var rwSquare = wSquare-10;
         var rows=[];
