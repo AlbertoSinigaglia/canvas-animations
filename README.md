@@ -75,8 +75,15 @@ Simple implementation of the famous game (but with simple graphic elements)
 ## Follower
 Simple animation which spawns a circle with follow the mouse, but smoothly
 
+
+## Fourier Series && Fourier Series Representation
+Simple animation which represent a Fourier series with circles, first one with circles inside other circles, second one drawing on screen the position of the last circle.  You can choose the number of circles by changing the number inside the "init" call
+```javascript
+var first= new Circle(canvas.height/4-100).init(10);
+```
+
 ## GraphicFunction
-Simple animation whitch draw a ellipse each frame ina  position determined by a function, wich can be modyfy by changing those lines
+Simple animation which draw a ellipse each frame ina  position determined by a function, wich can be modyfy by changing those lines
 ```javascript
 var a = 3.085;
 var b = -1.504;
@@ -86,7 +93,7 @@ var step = 0.0002;
 ```
 
 ## Gravity
-Simple animation which spawns some balls with a mass, and emulating the gravity, whitch can be changed by modifying
+Simple animation which spawns some balls with a mass, and emulating the gravity, which can be changed by modifying
 ```javascript
 this.gravity=0.6;
 this.friction=0.6;
