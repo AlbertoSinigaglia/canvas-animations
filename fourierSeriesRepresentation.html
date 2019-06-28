@@ -1,0 +1,77 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+            }
+            canvas{
+                border: 1px solid black;
+                
+            }
+        </style>
+    </head>
+    
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+
+
+
+
+        function Circle(radius, dr=0.005){
+            this.radius=radius;
+            this.r=0;
+            this.child=null;
+            this.dr=dr;
+            this.init=function(children){
+                if(children){
+                    this.child=new Circle(this.radius*2/3, this.dr*1.7).init(children-1);
+                    return this;
+                }
+            }
+            this.update=function(x=0, y=0){
+                this.r+=this.dr;
+                if(this.child)this.child.update(x+Math.cos(this.r)*(this.radius), y+Math.sin(this.r)*(this.radius));
+                else this.draw(x, y);
+            }
+            this.draw=function(x, y){
+                pos=[y+Math.sin(this.r)*(this.radius)].concat(pos);
+                if(pos.length==canvas.width)pos.splice(pos.length-1);
+                c.beginPath()
+                c.strokeStyle="black";
+                c.lineWidth="3";
+                c.lineCap="round";
+                c.moveTo(canvas.width/2, pos[0]);
+                for(var i=0; i<pos.length; i++){
+                    c.lineTo(canvas.width/2-i, pos[i]);
+                }
+                c.stroke();
+                c.closePath();
+                
+                
+            }
+        }
+        var first= new Circle(canvas.height/4-100).init(10);
+        var pos=[];
+        c.translate(canvas.width/2, canvas.height/2);
+        function animate(){
+            requestAnimationFrame(animate);
+            c.clearRect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
+            first.update();
+            
+            /*
+            var imgdata=c.getImageData(0,0, canvas.width, canvas.height);
+            c.clearRect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
+            first.update();
+            c.putImageData(imgdata, -1, 0);
+            */
+        }
+        animate();
+    </script>
+</html>

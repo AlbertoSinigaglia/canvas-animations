@@ -1,0 +1,68 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+            }
+            canvas{
+                border: 1px solid black;
+                background-color: #212121;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+
+
+
+
+        function Circle(radius, dr=0.005){
+            this.radius=radius;
+            this.r=0;
+            this.child=null;
+            this.dr=dr;
+            this.color=null;
+            this.init=function(children){
+                this.color= "hsl("+359/nCircles*children+",100%,50%)";
+                if(children){
+                    this.child=new Circle(this.radius/2, this.dr*2).init(children-1);
+                    return this;
+                }
+            }
+            this.update=function(x=0, y=0){
+                this.r+=this.dr;
+                if(this.child)this.child.update(x+Math.cos(this.r)*(this.radius), y+Math.sin(this.r)*(this.radius));
+                this.draw(x, y);
+            }
+            this.draw=function(x, y){
+                c.beginPath();
+                c.strokeStyle=this.color;
+                c.arc(x, y, this.radius, 0, Math.PI*2, false);
+                c.stroke();
+                c.closePath();
+                c.beginPath();
+                c.fillStyle="white";
+                c.arc(x+Math.cos(this.r)*(this.radius), y+Math.sin(this.r)*(this.radius), 1, 0, Math.PI*2, false);
+                c.fill();
+                c.closePath();
+            }
+        }
+        var nCircles=10;
+        var first= new Circle(canvas.height/3-100).init(nCircles);
+        c.translate(canvas.width/2, canvas.height/2);
+        function animate(){
+            requestAnimationFrame(animate);
+            c.clearRect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
+            first.update();
+        }
+        animate();
+    </script>
+</html>
