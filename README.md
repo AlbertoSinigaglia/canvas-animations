@@ -81,6 +81,16 @@ Simple animation which represent a Fourier series with circles, first one with c
 ```javascript
 var first= new Circle(canvas.height/4-100).init(10);
 ```
+## FractalBinaryTree
+Simple animation which represent a Fractal Binary Tree made by a L-system. You can choose "wood" color by changing 
+```javascript
+c.strokeStyle="brown";
+```
+and "leaves" color by changing
+```javascript
+c.strokeStyle="green";
+```
+The pseudo-code can be found here: https://en.wikipedia.org/wiki/L-system#Example_2:_Fractal_(binary)_tree 
 
 ## GraphicFunction
 Simple animation which draw a ellipse each frame ina  position determined by a function, wich can be modyfy by changing those lines
