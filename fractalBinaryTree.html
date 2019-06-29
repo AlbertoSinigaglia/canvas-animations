@@ -1,0 +1,97 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+            }
+            canvas{
+                border: 1px solid black;
+                
+            }
+        </style>
+    </head>
+    
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+        var canvas=document.querySelector("canvas");
+        canvas.width = 2*window.innerWidth;
+        canvas.height = 2*window.innerHeight;
+        canvas.style.width = window.innerWidth+"px";
+        canvas.style.height = window.innerHeight+"px";
+        var c= canvas.getContext('2d');
+        window.addEventListener("keydown", function(e) {
+            e = e || window.event;
+            if (e.key == ' ') {
+                update();
+            }
+        }, false);
+
+
+        var reg= "0";
+        var wSeg=3;
+        c.strokeStyle="black";
+        if (!Array.prototype.last){
+            Array.prototype.last = function(){
+                return this[this.length - 1];
+            };
+        };
+        function update(){
+            c.clearRect(0,0,canvas.width, canvas.height);
+            updateString();
+            c.save();
+            draw(reg);
+            c.restore();
+        }
+        function updateString(){
+            var newReg="";
+            for(var i=0; i<reg.length; i++){
+                if(reg[i]==="1")newReg+="11";
+                else if(reg[i]==="0")newReg+="1[0]0";
+                else newReg+=reg[i];
+            }
+            reg=newReg;
+        }
+
+        function draw(r){
+            c.translate(canvas.width/2, canvas.height);
+            var angle=Math.PI*3/2;
+            var positions=[{x:0, y:0,  c: angle}];
+            for(var i=0; i<reg.length; i++){
+                if(r[i]==="1"){
+                    var last = positions.last();
+                    c.beginPath();
+                    c.strokeStyle="brown";
+                    c.moveTo(last.x,last.y);
+                    c.lineTo(last.x+Math.cos(angle)*wSeg, last.y+Math.sin(angle)*wSeg);
+                    c.stroke();
+                    c.closePath();
+                    positions.last().x=last.x+Math.cos(angle)*wSeg;
+                    positions.last().y=last.y+Math.sin(angle)*wSeg;
+                }
+                if(r[i]==="0"){
+                    var last = positions.last();
+                    c.beginPath();
+                    c.strokeStyle="green";
+                    c.moveTo(last.x,last.y);
+                    c.lineTo(last.x+Math.cos(angle)*wSeg, last.y+Math.sin(angle)*wSeg);
+                    c.stroke();
+                    c.closePath();
+                }
+                if(reg[i]==="["){
+                    var last = positions.last();
+                    positions.push({x: last.x, y: last.y, c: angle});
+                    angle-=Math.PI/4;
+                }
+                if(reg[i]==="]"){
+                    var last = positions.last();
+                    angle=positions.pop().c;
+                    angle+=Math.PI/4
+                }
+            }
+        }
+        
+    </script>
+</html>
