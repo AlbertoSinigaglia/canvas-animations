@@ -92,6 +92,12 @@ c.strokeStyle="green";
 ```
 The pseudo-code can be found here: https://en.wikipedia.org/wiki/L-system#Example_2:_Fractal_(binary)_tree 
 
+See also this combination:
+```javascript
+if(reg[i]==="1")newReg+="11";
+else if(reg[i]==="0")newReg+="1[[0[0]]]0[0]0";
+var wSeg=10;
+```
 ## GraphicFunction
 Simple animation which draw a ellipse each frame ina  position determined by a function, wich can be modyfy by changing those lines
 ```javascript
