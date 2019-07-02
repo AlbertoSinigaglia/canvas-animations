@@ -1,0 +1,133 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+            }
+            canvas{
+                border: 1px solid black;
+                background-color: #111111;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+
+
+        window.addEventListener("keydown", function(e) {
+            e = e || window.event;
+            if (e.key == ' ') {
+                animate();
+            }
+        }, false);
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        function distance(x1, y1, x2, y2){
+            return Math.sqrt(
+                        Math.pow(x1-x2 ,2)
+                            +
+                        Math.pow(y1-y2 ,2)
+                    );
+        }
+
+        var points=[];
+        var nPoints=300;
+        var border=1/40;
+        for(var i=0; i<nPoints; i++){
+            points.push({x: Math.floor(Math.random()*canvas.width*(1-border*2)+canvas.width*border),y: Math.floor(Math.random()*canvas.height*(1-border*2)+canvas.height*border)})
+        }
+        //find the lowest point
+        var lowest=points[0];
+        for(var i=0; i<points.length; i++){
+            if(points[i].x<lowest.x || (points[i].x==lowest.x && points[i].y<lowest.y)){
+                lowest=points[i];
+            } 
+        }
+        //reorder points by the angle made with lowest
+        var o=[];
+        for(var i=0; i<nPoints-1; i++){
+            var min=Math.PI*2;;
+            var iMin=NaN;
+            for(var j=0; j<points.length; j++){
+                if(Math.atan2(points[j].y-lowest.y, points[j].x-lowest.x)<min && points[j].y-lowest.y && points[j].x-lowest.x){
+                    iMin=j;
+                    min=Math.atan2(points[j].y-lowest.y, points[j].x-lowest.x);
+                }
+            }
+            if(iMin!=NaN){
+                o.push(points.splice(iMin,1)[0]);
+            }
+            else break;
+        }
+        //reset points
+        points=o;
+        function startinAngle(){
+            var cx=points[stack[0]].x, cy=points[stack[0]].y, ex=points[stack[1]].x, ey=points[stack[1]].y;
+            var dy = ey - cy;
+            var dx = ex - cx;
+            var theta = Math.atan2(dy, dx); // range (-PI, PI]
+            theta *= 180 / Math.PI; // rads to degs, range (-180, 180]
+            if (theta < 0) theta = 360 + theta; // range [0, 360)
+            return 360-theta; 
+        }
+        function angle(pt1, p2, pt3) {
+            var p1={x: pt1.x-p2.x, y: pt1.y-p2.y}
+            var p3={x: pt3.x-p2.x, y: pt3.y-p2.y}
+            var a3 = Math.atan2(p3.y, p3.x);
+            if (a3<0)a3= Math.PI*2+a3;
+            var a1 = Math.atan2(p1.y, p1.x);
+            if (a1<0)a1= Math.PI*2+a1;
+            if(a1<a3)a1+=Math.PI*2;
+            var l = distance(0,0, p1.x, p1.y);
+            var totA=a1-a3;
+            p1={x: l*Math.cos(totA), y: l*Math.sin(totA)};
+            return Math.atan2(p1.y, p1.x)>0;
+        }
+        points=[lowest].concat(points).concat(lowest);
+        var stack=[0,1,2];
+        function animate(){
+            if(stack[stack.length-1]!=points.length-1){
+                if(angle(points[stack[stack.length-1]], points[stack[stack.length-2]], points[stack[stack.length-3]])){
+                    stack[stack.length-2]=stack[stack.length-1];
+                    stack.pop();
+                    while(stack.length<3)stack.push(stack[stack.length-1]+1);
+                }
+                else stack.push(stack[stack.length-1]+1);
+                requestAnimationFrame(animate);
+            }
+            
+            c.clearRect(0, 0, window.innerWidth, window.innerHeight);
+            
+            c.beginPath();
+            c.moveTo(points[stack[0]].x, points[stack[0]].y);
+            for(var i = 0; i<stack.length;i++)c.lineTo(points[stack[i]].x, points[stack[i]].y);
+            c.stroke();
+            c.closePath();
+            for(var i=0; i<points.length; i++){
+                var sent=true;
+                for(var j=0; j<stack.length&&sent; j++){
+                    if(stack[j]==i)sent=false;
+                    if(stack[j]>i)break;
+                }
+                c.fillStyle="white";
+                c.strokeStyle="white";
+                c.beginPath();
+                c.arc(points[i].x, points[i].y, 3, 0 , Math.PI*2, 0);
+                if(!sent){
+                    c.fillStyle="#ff2cc7";
+                    c.strokeStyle="#ff2cc7";
+                }
+                c.fill();
+                c.stroke();
+                c.closePath();
+            }
+        }
+        animate();
+    </script>
+</html>
+
