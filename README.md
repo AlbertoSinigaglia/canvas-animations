@@ -204,3 +204,9 @@ Simple animation which spawns a Hexagon and makes it walk. Working with every 2D
 ```javascript
 this.points=generatePoints(6);
 ```
+
+## Wrapping Algorithm
+Simple animation which find a convex hull on a finite set of points, usign an algorithm like "Graham scan": https://en.wikipedia.org/wiki/Graham_scan. You can choose the number of points by changing
+```javascript
+var nPoints=300;
+```
