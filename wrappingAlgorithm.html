@@ -26,6 +26,10 @@
         var canvas=document.querySelector("canvas");
         canvas.width=window.innerWidth;
         canvas.height=window.innerHeight;
+        canvas.width = 2*window.innerWidth;
+        canvas.height = 2*window.innerHeight;
+        canvas.style.width = window.innerWidth+"px";
+        canvas.style.height = window.innerHeight+"px";
         var c= canvas.getContext('2d');
         function distance(x1, y1, x2, y2){
             return Math.sqrt(
@@ -113,9 +117,10 @@
                 requestAnimationFrame(animate);
             }
             
-            c.clearRect(0, 0, window.innerWidth, window.innerHeight);
+            c.clearRect(0, 0, canvas.width, canvas.height);
             
             c.beginPath();
+            c.lineWidth=2;
             c.moveTo(points[stack[0]].x, points[stack[0]].y);
             for(var i = 0; i<stack.length;i++)c.lineTo(points[stack[i]].x, points[stack[i]].y);
             c.stroke();
@@ -129,7 +134,7 @@
                 c.fillStyle="white";
                 c.strokeStyle="white";
                 c.beginPath();
-                c.arc(points[i].x, points[i].y, 3, 0 , Math.PI*2, 0);
+                c.arc(points[i].x, points[i].y, 6, 0 , Math.PI*2, 0);
                 if(!sent){
                     c.fillStyle="#ff2cc7";
                     c.strokeStyle="#ff2cc7";
