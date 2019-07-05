@@ -39,7 +39,19 @@
         var nPoints=300;
         var border=1/40;
         for(var i=0; i<nPoints; i++){
-            points.push({x: Math.floor(Math.random()*canvas.width*(1-border*2)+canvas.width*border),y: Math.floor(Math.random()*canvas.height*(1-border*2)+canvas.height*border)})
+            var sent=false;
+            do{
+                sent=false;
+                points.push({x: Math.floor(Math.random()*canvas.width*(1-border*2)+canvas.width*border),y: Math.floor(Math.random()*canvas.height*(1-border*2)+canvas.height*border)})
+                if(checkY()){
+                    sent=true;
+                    points.pop();
+                }
+            }while(sent);
+        }
+        function checkY(){
+            for(var i=0; i<points.length-1; i++) if(points[i].y==points[points.length-1].y || points[i].x==points[points.length-1].x) return true;
+            return false;
         }
         //find the lowest point
         var lowest=points[0];
