@@ -1,0 +1,89 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+            }
+            canvas{
+                border: 1px solid black;
+                background-color: #212121;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        canvas.addEventListener("mousemove", function(event) {
+            setPositionMouse(event);
+        });
+        var mouseX=canvas.width/2;
+        var mouseY=canvas.height/2;
+        function setPositionMouse(e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        }
+        function distance(x1, y1, x2, y2){
+            return Math.sqrt(
+                        Math.pow(x1-x2 ,2)
+                            +
+                        Math.pow(y1-y2 ,2)
+                    );
+        }
+        var positionX=canvas.width/2;
+        var positionY=canvas.height/2;
+        canvas.addEventListener("click", function(event) {
+            positionX=event.clientX;
+            positionY=event.clientY;
+        });
+
+
+
+
+
+
+        var gravity=10;
+        var followerVel;
+        function Follower(){
+            this.x=canvas.width/2;
+            this.y=canvas.height/2;
+            this.radius=10;
+            this.dx=0;
+            this.dy=0;
+            this.massrap=100;
+            this.update=function(){
+                var nV={dx:(mouseX-this.x)/gravity, dy: (mouseY-this.y)/gravity};
+                this.dx= (this.dx*this.massrap+nV.dx)/(this.massrap+1);
+                this.dy= (this.dy*this.massrap+nV.dy)/(this.massrap+1);
+                this.x+=this.dx;
+                this.y+=this.dy;
+                this.draw();
+            }
+            this.draw=function(){
+                c.beginPath();
+                c.arc(this.x, this.y, this.radius, Math.PI*2, false);
+                c.fillStyle="white";
+                c.strokeStyle="rgba(0,0,0,0)";
+                c.shadowBlur=19;
+                c.shadowColor="white";
+                c.fill();
+                c.stroke();
+                c.closePath();
+
+            }
+        }
+        var follower=new Follower();
+        function animate(){
+            requestAnimationFrame(animate);
+            c.clearRect(0,0, canvas.width, canvas.height);
+            follower.update();
+        }
+        animate();
+    </script>
+</html>
