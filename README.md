@@ -190,6 +190,10 @@ Simple animation which spawns some random points on the screen, and connect with
 var tollerance = 300;
 ```
 
+## Spooky Sequence
+An animation created in order to represent the Spooky Sequence, taking inspiration from the YouTube channel NumberPhile
+
+
 ## Starship
 Simple animation which spawns some random points in the center of the screen, in order to create Star Trek starship effect, and the speed change based on the distance of the mouse from the left side of the canvas
 
