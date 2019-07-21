@@ -114,6 +114,8 @@ Simple animation which spawns some balls with a mass, and emulating the gravity,
 this.gravity=0.6;
 this.friction=0.6;
 ```
+## GravityFollower
+Like "FOLLOWER" but with a kind of "element force" influenced by the mouse position
 
 ## LabyrinthGenerator
 Simple animation representing a possible labyrinth from the top left corner to the bottom right, pseudo-code taken from 
