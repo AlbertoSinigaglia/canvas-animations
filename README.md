@@ -205,6 +205,9 @@ Simple animation which represent times table: you can change the number of point
 var tt = new TimesTable(200, Math.min(canvas.height-100, canvas.width-100)/2);
 ```
 
+## VideoWebcam
+Simple "video to matrix" based on the average of the rgb value of the pixel inside the "rectangle" of the matrix-video, in order to create a version where instead of rectangle there will be checkbox (nicer than this ahah) that will be uploaded as CheckboxVideoWebcam
+
 ## WalkingHexagon
 Simple animation which spawns a Hexagon and makes it walk. Working with every 2D polygon. The number of vertices can be changed by changing this line with the number you prefer
 ```javascript

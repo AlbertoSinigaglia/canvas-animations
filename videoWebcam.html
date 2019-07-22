@@ -1,0 +1,73 @@
+<html>
+<body>
+    <video id="video" autoplay="true"></video>
+    <canvas></canvas>
+    <script>
+        var video=document.getElementById("video");
+        var currentStream=0;
+        var canvas=document.querySelector("canvas");
+        if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    if(currentStream==0)animate();
+                    video.srcObject = stream;
+                })
+                .catch(function (err0r) {
+                    console.log("OPS: ", err0r);
+                });
+        }
+        video.addEventListener("play", function(){
+            canvas.height=video.videoHeight;
+            canvas.width=video.videoWidth;
+            video.style.display="none";
+            wSquare=Math.floor(canvas.width/nSquare);
+            nRow= Math.floor(canvas.height/wSquare);
+        })
+        var c= canvas.getContext("2d");
+        var nSquare=100;
+        var wSquare=0;
+        var nRow= 0;
+        c.lineWidth=0;
+        c.translate(-canvas.width, 0);
+        c.scale(-1,1)
+        function animate(){
+            requestAnimationFrame(animate);
+            c.drawImage(video, 0, 0, canvas.width, canvas.height);
+            var imgdata=c.getImageData(0,0, canvas.width, canvas.height);
+            c.clearRect(0, 0, canvas.width, canvas.height);
+            var data = imgdata.data;
+            for(var i=0; i<nRow; i++){
+                for(var j=0; j<nSquare; j++){
+                    //get the average in the square
+                    var avg={r:0, g:0, b:0};
+                    for (var t=0; t<wSquare*wSquare; t+=1){
+                        avg.r+=data[(canvas.width*i*wSquare + j*wSquare + Math.floor(t/wSquare)*canvas.width + t%wSquare )*4]/255;
+                        avg.g+=data[(canvas.width*i*wSquare + j*wSquare + Math.floor(t/wSquare)*canvas.width + t%wSquare )*4 + 1]/255;
+                        avg.b+=data[(canvas.width*i*wSquare + j*wSquare + Math.floor(t/wSquare)*canvas.width + t%wSquare )*4 + 2]/255;
+                        if(isNaN(data[(canvas.width*i*wSquare + j*wSquare + Math.floor(t/wSquare)*canvas.width + t%wSquare )*4 + 2]))console.log((canvas.width*i*wSquare + j*wSquare + Math.floor(t/wSquare)*canvas.width + t%wSquare )*4 + 2)
+                    }
+                    avg.r/=(wSquare*wSquare);
+                    avg.g/=(wSquare*wSquare);
+                    avg.b/=(wSquare*wSquare);
+                    avg=(avg.r+avg.g+avg.b)/3;
+                    if(avg>0.5) c.fillStyle="white";
+                    else c.fillStyle="black";
+                    c.fillRect(j*wSquare, i*wSquare, wSquare, wSquare);
+
+                }
+            }
+            /*
+            for(var i=0; i<nRow; i++){
+                for(var j=0; j<nSquare; j++){
+                    c.fillStyle= "rgb("+data[imgdata.width*i+wSquare*j]+"," +data[imgdata.width*i+wSquare*j]+","+ data[imgdata.width*i+wSquare*j]+")";
+                    c.lineWidth=0;
+                    c.strokeStyle="rgb(0,0,0,0)"
+                    c.fillRect(j*wSquare, i*wSquare, wSquare, wSquare);
+                }
+            }*/
+            
+            //c.putImageData(imgdata,0 , 0)
+        }
+    </script>
+</body>
+</html>
