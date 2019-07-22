@@ -32,6 +32,9 @@ Simple 80' breakout game, you can change number of row block by changing this li
 ```javascript
 var nRowBriks=3;
 ```
+## CheckboxVideoWebcam
+Like videoWebcam, only with checkbox... very very very heavy script, the device may overheat
+
 
 ## Circle & Circle2
 Simple animation where some line spawn inside a circle, better Circle2
