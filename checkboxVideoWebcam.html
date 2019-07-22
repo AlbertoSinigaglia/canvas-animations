@@ -64,7 +64,7 @@
             for(var i=0; i<nRow; i++){
                 var r=[];
                 for(var j=0; j<nSquare; j++){
-                    el.innerHTML+='<input type="checkbox" id="'+(i*nSquare+j)+'" style="position: absolute; top:'+i*wSquare+'; left:'+j*wSquare+'">';
+                    el.innerHTML+='<input type="checkbox" id="'+(i*nSquare+j)+'" style="position: absolute; top:'+(i+5)*wSquare+'; left:'+(j+5)*wSquare+'">';
                     r.push(document.getElementById((i*nSquare+j)));
                 }
                 checkboxes.push(r);
