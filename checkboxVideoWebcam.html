@@ -64,7 +64,7 @@
             for(var i=0; i<nRow; i++){
                 var r=[];
                 for(var j=0; j<nSquare; j++){
-                    el.innerHTML+='<input type="checkbox" id="'+(i*nSquare+j)+'" style="position: absolute; top:'+(i+5)*wSquare+'; left:'+(j+5)*wSquare+'">';
+                    el.innerHTML+='<input type="checkbox" id="'+(i*nSquare+j)+'" style="position: absolute; top:'+i*(wSquare+5)+'; left:'+j*(wSquare+5)+'">';
                     r.push(document.getElementById((i*nSquare+j)));
                 }
                 checkboxes.push(r);
@@ -100,7 +100,6 @@
                         avg.b/=(wSquare*wSquare);
                         avg=(avg.r+avg.g+avg.b)/3;
                         if(avg<=0.5) {
-
                             var element = document.getElementById((i*nSquare+j))
                             element.setAttribute("checked", "true");
                             element.checked = true;
