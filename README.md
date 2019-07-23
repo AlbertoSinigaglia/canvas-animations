@@ -42,11 +42,18 @@ Simple animation where some line spawn inside a circle, better Circle2
 ## CircleAnimation
 Simple animation where balls near the mouse increase their radius; there are a lot of property that can be changed in the code if you want
 
-## CircleLibyrinth
+## CircleLabyrinth
 Simple animation which spawns peace of circle in a matrix; you can change the number of circle per line by changing this line with the number you want
 ```javascript
 var nCircle=100;
 ```
+
+## CircleVideoWebcam
+Simple animation where by webcam is taken the video and rendered with circle, bigger as the "brightness" of the region of the video that is located on: you can change the number of square on x-axes by changing
+```javascript
+var nSquare=70;
+```
+The two button on the top right corner allow you to choose the color used to fill the circle
 
 ## CircularMotion
 Simple animation which spawns small circle around the mouse with random circular trajectories 
@@ -198,6 +205,11 @@ var tollerance = 300;
 ## Spooky Sequence
 An animation created in order to represent the Spooky Sequence, taking inspiration from the YouTube channel NumberPhile
 
+## SquareVideoWebcam
+Simple animation where by webcam is taken the video and rendered with square, bigger as the "brightness" of the region of the video that is located on: you can change the number of square on x-axes by changing
+```javascript
+var nSquare=70;
+```
 
 ## Starship
 Simple animation which spawns some random points in the center of the screen, in order to create Star Trek starship effect, and the speed change based on the distance of the mouse from the left side of the canvas
