@@ -1,0 +1,78 @@
+<html>
+    <head>
+        <style>
+            *{
+                margin:0px; padding:0px;
+                background-color: #212121;
+            }
+            video{
+                display:none;
+            }
+            body{
+                display:flex;
+                align-items: center;
+                justify-content: center;
+            }
+        </style>
+    </head>
+<body>
+    <video id="video" autoplay="true"></video>
+    <canvas></canvas>
+    <canvas id="temp" style="display: none"></canvas>
+    <script>
+        var video=document.getElementById("video");
+        var currentStream=0;
+        var canvas=document.querySelector("canvas");
+        var temp=document.getElementById("temp");
+        var cTemp=temp.getContext("2d");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext("2d");
+        if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    // if(currentStream==0){
+                    //     //animate();
+                    // }
+                    video.srcObject = stream;
+                })
+                .catch(function (err0r) {
+                    console.log("OPS: ", err0r);
+                });
+        }
+        var nSquare=70;
+        var wSquare=0;
+        var nRow=0;
+        video.addEventListener("play", function(){
+            var wScale= window.innerWidth / video.videoWidth;
+            var scale=0;
+            if(video.videoHeight*wScale > window.innerHeight){
+                temp.width =  canvas.width=video.videoWidth * (window.innerHeight/video.videoHeight);
+                temp.height =  canvas.height=window.innerHeight;
+            }
+            else {
+                temp.width =  canvas.width=window.innerWidth;
+                temp.height =  canvas.height=video.videoHeight * (window.innerWidth/video.videoWidth);
+            }
+            c.drawImage(video, 0, 0, canvas.width, canvas.height);
+            animate();
+        });
+        function animate(){
+            requestAnimationFrame(animate);
+            cTemp.drawImage(video, 0, 0, canvas.width, canvas.height);
+            var imgdatatemp=cTemp.getImageData(0,0, temp.width, temp.height);
+            //c.clearRect(0, 0, canvas.width, canvas.height);
+            var dv = imgdatatemp.data;
+            var imagedatacanvas = c.getImageData(0,0, canvas.width, canvas.height);
+            var dc=imagedatacanvas.data;
+            for(var i=0; i<dv.length; i+=4){
+                dc[i]+=(dv[i]-dc[i])/15
+                dc[i+1]+=(dv[i+1]-dc[i+1])/15
+                dc[i+2]+=(dv[i+2]-dc[i+2])/15
+                dc[i+3]+=255
+            }
+            c.putImageData(imagedatacanvas,0 , 0);
+        }
+    </script>
+</body>
+</html>
