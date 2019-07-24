@@ -108,6 +108,13 @@ if(reg[i]==="1")newReg+="11";
 else if(reg[i]==="0")newReg+="1[[0[0]]]0[0]0";
 var wSeg=10;
 ```
+
+## FrameDShadow
+Simple animation which represent the webcam input with a Delay, making a sort of shadow. The dalay (and so the shadow length) can be choose by changing
+```javascript
+var delay=15;
+```
+
 ## GraphicFunction
 Simple animation which draw a ellipse each frame ina  position determined by a function, wich can be modyfy by changing those lines
 ```javascript
