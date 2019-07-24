@@ -57,6 +57,7 @@
             c.drawImage(video, 0, 0, canvas.width, canvas.height);
             animate();
         });
+        var delay=15;
         function animate(){
             requestAnimationFrame(animate);
             cTemp.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -66,9 +67,9 @@
             var imagedatacanvas = c.getImageData(0,0, canvas.width, canvas.height);
             var dc=imagedatacanvas.data;
             for(var i=0; i<dv.length; i+=4){
-                dc[i]+=(dv[i]-dc[i])/15
-                dc[i+1]+=(dv[i+1]-dc[i+1])/15
-                dc[i+2]+=(dv[i+2]-dc[i+2])/15
+                dc[i]+=(dv[i]-dc[i])/delay
+                dc[i+1]+=(dv[i+1]-dc[i+1])/delay
+                dc[i+2]+=(dv[i+2]-dc[i+2])/delay
                 dc[i+3]+=255
             }
             c.putImageData(imagedatacanvas,0 , 0);
