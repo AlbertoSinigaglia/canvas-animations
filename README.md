@@ -184,6 +184,9 @@ var angle=n*137.3;
 Simple animation representing a raycasting 2D on the canvas, with random segments. 
 The first one generate rays in every direction, the second one only in a specific "view", which change by moving mouse.
 
+## RayCasting2DwithUserWall
+Simple animation representing a raycasting 2D on the canvas, with as Wall the mouse-dragged trak 
+
 ## RayCasting3D && RayCastingWithStructure
 Simple animation representig the 2D casting in a 3D view, based on the distance. The second one is the best one, has a 2D minimap on the top right corner, and you can move inside the space with the keyboard arrow.
 
