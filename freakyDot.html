@@ -1,0 +1,73 @@
+<html>
+    <head>
+        <style>
+            *{
+                margin:0px;
+                padding:0px;
+            }
+            canvas{
+                background-color: #212121;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+
+
+
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        function Square(x,y, color){
+            this.x=x;
+            this.color=color;
+            this.y=y;
+            this.draw=function(){
+                c.beginPath();
+                c.rect(this.x, this.y, width, width);
+                if(this.color){
+                    c.fill();
+                }
+                c.closePath();
+            }
+        }
+        var angle=0;
+        var nSquare=200;
+        var width=canvas.width/nSquare;
+        var original = [];
+        var rotated = [];
+        var tmp = true;
+        c.fillStyle="white";
+        c.strokeStyle="black";
+        c.lineWidth=1;
+        for(let i=0; i<nSquare;i++){
+            var col=tmp;
+            for(let j=0; j<nSquare; j++){
+                original.push(new Square(j*width-canvas.width/2, i*width-canvas.width/2, col));
+                rotated.push(new Square(j*width-canvas.width/2, i*width-canvas.width/2, col));
+                col=!col;
+            }
+            tmp=!tmp;
+        }
+        var angle=0;
+        var da=0.0003;
+        function animate(){
+            angle+=da;
+            requestAnimationFrame(animate);
+            c.clearRect(-canvas.width,-canvas.height,canvas.width*2, canvas.height*2);
+            c.save();
+            c.rotate(angle);
+            original.forEach((el)=>el.draw());
+            c.restore();
+            
+            rotated.forEach((el)=>el.draw());
+            c.rotate(-da);
+        }
+        c.translate(canvas.width/2, canvas.height/2);
+        c.rotate(angle);
+        animate();
+    </script>
+</html>
