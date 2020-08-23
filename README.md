@@ -224,6 +224,12 @@ var nSquare=70;
 ## Starship
 Simple animation which spawns some random points in the center of the screen, in order to create Star Trek starship effect, and the speed change based on the distance of the mouse from the left side of the canvas
 
+## Super Drawing
+Super basic drawing "tool" for fractals. You can customize the number of "fractals" by changing
+```javascript
+const segments = /* number of "segments" of the "fractal"*/;
+```
+
 ## SpiderWeb && SpiderWeb2
 Simple animation which represent times table: you can change the number of points used on the circle by changing the first value of this line (take in account that every frame has to generate that number of line, so a big number can cause lag)
 ```javascript

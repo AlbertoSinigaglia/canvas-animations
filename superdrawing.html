@@ -1,0 +1,96 @@
+<html>
+    <head>
+        <style>
+            html{
+                width: 100%;
+                height: 100%;
+            }
+            canvas, body{
+                width: 100%;
+                height: 100%;
+                padding:0px;
+                margin:0px;
+                background-color: black;
+                position: relative
+            }
+            canvas{
+                position: absolute !important; top: 0; bottom: 0; left:0; right:0;background-color: rgba(0,0,0,0) !important;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas style="z-index: 999!important;"></canvas>
+        <canvas></canvas>
+        <script>
+            const segments = 10;
+            const scale = 2;
+            const [canvas, overlay] = document.querySelectorAll("canvas");
+            canvas.width = scale * (window.innerWidth);
+            canvas.height = scale * (window.innerHeight);
+            canvas.style.width = window.innerWidth+"px";
+            canvas.style.height = window.innerHeight+"px";
+            overlay.width = scale * (window.innerWidth);
+            overlay.height = scale * (window.innerHeight);
+            overlay.style.width = window.innerWidth+"px";
+            overlay.style.height = window.innerHeight+"px";
+            const ctx = canvas.getContext("2d");
+            const transX = canvas.width * 0.5,
+                  transY = canvas.height * 0.5;
+            ctx.translate(transX, transY);
+            const overlay_ctx = overlay.getContext("2d");
+            const overlay_transX = overlay.width * 0.5,
+                  overlay_transY = overlay.height * 0.5;
+            overlay_ctx.translate(overlay_transX, overlay_transY);
+            overlay_ctx.strokeStyle = "white"
+            overlay_ctx.lineWidth = 1;
+            for(let i = 0; i < segments; i++){
+                const angle = Math.PI * 2 / segments;
+                const length = overlay.width;
+                overlay_ctx.moveTo(0, 0);
+                overlay_ctx.lineTo(Math.cos( angle * i ) * length, Math.sin( angle * i ) * length);
+                overlay_ctx.stroke();
+                overlay_ctx.closePath();
+            }
+            ctx.lineCap = "round";
+            ctx.lineWidth = 10;
+            let current_position = [], previous_position = [];
+            let is_writing = false;
+            document.addEventListener('mousedown', (evt) => {
+                const rect = canvas.getBoundingClientRect();
+                current_position = previous_position = [(evt.clientX - window.window.innerWidth/2) * scale, (evt.clientY - window.window.innerHeight/2)* scale]
+                is_writing = true;
+            });
+            document.addEventListener('mouseup', (evt) => {
+                current_position = previous_position = [];
+                is_writing = false;
+            });
+            canvas.addEventListener('mousemove', (evt) => {
+                const rect = canvas.getBoundingClientRect();
+                current_position = [(evt.clientX - window.window.innerWidth/2) * scale, (evt.clientY - window.window.innerHeight/2)* scale]
+            });
+            function animate(){
+                requestAnimationFrame(animate);
+                if(is_writing){
+                    const angle = Math.PI * 2 / segments;
+                    for(let i = 0; i < segments; i++){
+                        ctx.beginPath();
+                        const   xk_c = Math.cos(angle * i) * current_position[0] - Math.sin(angle * i) * current_position[1],
+                                yk_c = Math.sin(angle * i) * current_position[0] + Math.cos(angle * i) * current_position[1],
+                                xk_p = Math.cos(angle * i) * previous_position[0] - Math.sin(angle * i) * previous_position[1],
+                                yk_p = Math.sin(angle * i) * previous_position[0] + Math.cos(angle * i) * previous_position[1];
+                        var gradC = ctx.createLinearGradient(...previous_position, ...current_position,);
+                        gradC.addColorStop(0,`hsla(${Math.hypot(...previous_position)/2},100%,50%)`);
+                        gradC.addColorStop(1,`hsla(${Math.hypot(...current_position)/2},100%,50%)`);
+                        ctx.strokeStyle = gradC;
+                        ctx.moveTo(xk_p, yk_p);
+                        ctx.lineTo(xk_c, yk_c);
+                        ctx.stroke();
+                        ctx.closePath();
+                    }
+                }
+                previous_position = current_position;
+            }
+            animate();
+        </script>
+    </body>
+</html>
