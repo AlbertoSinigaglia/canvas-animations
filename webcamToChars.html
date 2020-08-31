@@ -1,0 +1,139 @@
+<html>
+    <head>
+        <style>
+            *{
+                margin:0px; padding:0px;
+                background-color: #212121;
+            }
+            video{
+                display:none;
+            }
+            body{
+                display:flex;
+                align-items: center;
+                justify-content: center;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+        <video autoplay="true"></video>
+        <script>
+            const video = document.querySelector("video");
+            const canvas = document.querySelector("canvas");
+            const ctx = canvas.getContext("2d");
+            let nSquare = 70;
+            let wSquare = 0;
+            let nRow = 0;
+            canvas.width=window.innerWidth;
+            canvas.height=window.innerHeight;
+            ctx.fillStyle="white";
+
+            
+
+            const alphabeth = [
+                'A','B','C','D','E','F','G','H','I','L','M','N','O','P','Q','R','S','T','U','V','Z',
+                'a','b','c','d','e','f','g','h','i','l','m','n','o','p','q','r','s','t','u','v','z',
+                '1','2','3','4','5','6','7','8','9',
+                '-','+','@','?','^','!','(',')','&','#','%','$','|','<','>'
+            ];
+            const coeff = alphabeth.map((el) => {
+                let can = document.createElement("canvas");
+                let context = can.getContext("2d");
+                can.height=60;
+                context.font = "normal 900 80px Arial";
+                can.width = context.measureText(el + "").width;
+                context.beginPath();
+                context.fillStyle = "black";
+                context.fillRect(0,0,can.width, can.height);
+                context.closePath();
+
+                context.beginPath();
+                context.font = "normal 900 80px Arial";
+                context.fillStyle = "white";
+                console.log(el);
+                context.fillText(el,0,can.height, can.width);
+
+                let data = context.getImageData(0,0, can.width, can.height).data;
+                let avg = {r:0, g:0,b:0}
+                //console.log(data);
+                for(let i = 0; i < data.length; i+=4){
+                    avg.r += data[i];
+                    avg.g += data[i+1];
+                    avg.b += data[i+2];
+                }
+                //document.querySelector("body").append(can);
+                return (avg.r + avg.b + avg.g) / (data.length);
+            })
+            if (navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(function (stream) {
+                        video.srcObject = stream;
+                    })
+                    .catch(function (err0r) {
+                        console.log("OPS: ", err0r);
+                    });
+            }
+            video.addEventListener("play", function(){
+                let wScale= window.innerWidth / video.videoWidth;
+                if(video.videoHeight*wScale > window.innerHeight){
+                    canvas.width=video.videoWidth * (window.innerHeight/video.videoHeight);
+                    canvas.height=window.innerHeight;
+                }
+                wSquare=Math.floor(canvas.width/nSquare);
+                nRow=Math.floor(canvas.height/wSquare)
+                animate();
+            });
+            function animate(){
+                requestAnimationFrame(animate);
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                let imgdata=ctx.getImageData(0,0, canvas.width, canvas.height);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let data = imgdata.data;
+                for(var i=0; i<nRow; i++){
+                    for(var j=0; j<nSquare; j++){
+                        //get the average in the square
+                        var avg={r:0, g:0, b:0};
+                        for (var t=0; t<wSquare*wSquare; t+=1){
+                            avg.r+=data[(canvas.width*i*wSquare + j*wSquare + Math.floor(t/wSquare)*canvas.width + t%wSquare )*4]/255;
+                            avg.g+=data[(canvas.width*i*wSquare + j*wSquare + Math.floor(t/wSquare)*canvas.width + t%wSquare )*4 + 1]/255;
+                            avg.b+=data[(canvas.width*i*wSquare + j*wSquare + Math.floor(t/wSquare)*canvas.width + t%wSquare )*4 + 2]/255;
+                            if(isNaN(data[(canvas.width*i*wSquare + j*wSquare + Math.floor(t/wSquare)*canvas.width + t%wSquare )*4 + 2]))console.log((canvas.width*i*wSquare + j*wSquare + Math.floor(t/wSquare)*canvas.width + t%wSquare )*4 + 2)
+                        }
+                        avg.r/=(wSquare*wSquare);
+                        avg.g/=(wSquare*wSquare);
+                        avg.b/=(wSquare*wSquare);
+                        avg=(avg.r+avg.g+avg.b)/3;
+                        avg=1-avg;
+                        let diff = coeff.map(el => Math.abs(el/100 - avg))
+                        let char = alphabeth[diff.indexOf(Math.min(...diff))];
+                        var width= wSquare*avg;
+                        // ctx.fillStyle="white";
+                        // ctx.fillRect(j*wSquare + (wSquare-width)/2, i*wSquare + (wSquare-width)/2, width, width);
+
+
+
+                        ctx.beginPath()
+                        ctx.fillStyle="white";
+                        ctx.textAlign = "center";   
+                        ctx.font="normal 900 15px arial";    
+                        ctx.fillText(char,j*wSquare + (wSquare-width)/2,i*wSquare + (wSquare-width)/2, width);
+                        ctx.closePath()
+
+                    }
+                }
+                /*
+                for(var i=0; i<nRow; i++){
+                    for(var j=0; j<nSquare; j++){
+                        ctx.fillStyle= "rgb("+data[imgdata.width*i+wSquare*j]+"," +data[imgdata.width*i+wSquare*j]+","+ data[imgdata.width*i+wSquare*j]+")";
+                        ctx.lineWidth=0;
+                        ctx.strokeStyle="rgb(0,0,0,0)"
+                        ctx.fillRect(j*wSquare, i*wSquare, wSquare, wSquare);
+                    }
+                }*/
+                
+                //ctx.putImageData(imgdata,0 , 0)*/
+            }
+        </script>
+    </body>
+</html>
