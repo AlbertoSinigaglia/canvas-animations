@@ -40,7 +40,7 @@
             const coeff = alphabeth.map((el) => {
                 let can = document.createElement("canvas");
                 let context = can.getContext("2d");
-                can.height=60;
+                can.height=160;
                 context.font = "normal 900 80px Arial";
                 can.width = context.measureText(el + "").width;
                 context.beginPath();
@@ -104,7 +104,6 @@
                         avg.g/=(wSquare*wSquare);
                         avg.b/=(wSquare*wSquare);
                         avg=(avg.r+avg.g+avg.b)/3;
-                        avg=1-avg;
                         let diff = coeff.map(el => Math.abs(el/100 - avg))
                         let char = alphabeth[diff.indexOf(Math.min(...diff))];
                         var width= wSquare*avg;
@@ -116,7 +115,7 @@
                         ctx.beginPath()
                         ctx.fillStyle="white";
                         ctx.textAlign = "center";   
-                        ctx.font="normal 900 15px arial";    
+                        ctx.font=`normal 900 ${wSquare}px arial`;    
                         ctx.fillText(char,j*wSquare + (wSquare-width)/2,i*wSquare + (wSquare-width)/2, width);
                         ctx.closePath()
 
