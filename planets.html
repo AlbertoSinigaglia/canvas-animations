@@ -1,0 +1,176 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+                background-color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: black;
+            }
+            canvas{
+                position: absolute;
+                top:0px;
+                left:0px;
+            }
+            .l2{z-index: 9999}
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+        
+    </body>
+    <script>
+        var canvas=document.querySelector("canvas");
+        var c= canvas.getContext('2d');
+
+        class Planet{
+            constructor(speed, origin, radius, width = 2, color = null){
+                this.angle = 0
+                this.speed = speed
+                this.radius = radius
+                this.origin = origin
+                this.x = this.origin.x + Math.sin(this.angle) * this.radius
+                this.y = this.origin.y + Math.cos(this.angle) * this.radius
+                this.color = color || `hsl(${Math.random() * 360}, 50%, 50%)`
+                this.width = width
+            }
+            update(){
+                this.angle += this.speed 
+                this.x = this.origin.x + Math.sin(this.angle) * this.radius
+                this.y = this.origin.y + Math.cos(this.angle) * this.radius
+            }
+            draw(){
+                c.beginPath();
+                c.strokeStyle = this.color
+                c.fillStyle = this.color
+                c.arc(
+                    this.x,
+                    this.y ,
+                    this.width, 0, Math.PI*2, false);
+                c.stroke();
+                c.fill();
+                c.closePath();
+            }
+
+        }
+        const scale = 1
+        canvas.width = scale * (window.innerWidth);
+        canvas.height = scale * (window.innerHeight);
+        canvas.style.width = window.innerWidth+"px";
+        canvas.style.height = window.innerHeight+"px";
+        c.translate(canvas.width/2, canvas.height/2);
+
+
+        const origin = {
+            x:0,
+            y:0
+        }
+        const speedFactor = 0.05
+        const skipFrames = 10
+        /*
+        const earth = new Planet(speedFactor * 0.017, origin, 200 * scale, 5)
+        const moon = new Planet(speedFactor * 0.173, earth, 80 * scale,2)
+        const mars = new Planet(speedFactor * 0.007, origin, 600 * scale, 5)
+        const fobos = new Planet(speedFactor * 0.17, mars, 50 * scale, 2)
+        const planets = [mars, earth, moon, fobos, ]
+        const toConnect = [mars, earth, moon, fobos, ]
+        */
+
+
+        
+        /* const earth = new Planet(speedFactor * 0.0137, origin, 100 * scale, 5)
+        const mars = new Planet(speedFactor * 0.0057, origin, 200 * scale, 5)
+        const giove = new Planet(speedFactor * 0.0317, origin , 600 * scale, 2)
+        const idk = new Planet(speedFactor * 0.3317, giove , 50 * scale, 2)
+        const planets = [mars, earth, giove, idk]
+        const toConnect = [mars, earth, giove, idk] */
+
+        /* const sun = new Planet(speedFactor * 0, origin, 0 * scale, 70, "yellow")
+        const venere = new Planet(speedFactor * 0.0237, origin, 80 * scale, 5, "rgb(170,140,100)")
+        const earth = new Planet(speedFactor * 0.0137, origin, 170 * scale, 5, "blue")
+        const moon = new Planet(speedFactor * 0.5137, earth, 20 * scale, 2, "grey")
+        const mars = new Planet(speedFactor * 0.0057, origin, 280 * scale, 5, "orange")
+        const giove = new Planet(speedFactor * 0.0027, origin, 500 * scale, 5, "rgb(220,220,220)")
+
+        const giove_1 = new Planet(speedFactor * 0.0327, giove, 50 * scale, 5, "rgb(110,110,110)")
+        const giove_2 = new Planet(speedFactor * 0.0227, giove, 70 * scale, 5, "rgb(020,120,260)")
+        const giove_3 = new Planet(speedFactor * 0.0127, giove, 80 * scale, 5, "rgb(250,20,80)")
+
+        const planets = [mars, earth, moon, sun, venere, giove, giove_1, giove_2, giove_3]
+        const toConnect = [mars, earth, moon, sun, venere, giove, giove_1, giove_2, giove_3]  */
+
+
+        /* const sun = new Planet(speedFactor * 0, origin, 0 * scale, 70, "rgba(0,0,0,0)")
+        const venere = new Planet(speedFactor * 0.0237, origin, 80 * scale, 5, "rgba(0,0,0,0)")
+        const earth = new Planet(speedFactor * 0.0137, origin, 170 * scale, 5, "rgba(0,0,0,0)")
+        const moon = new Planet(speedFactor * 0.5137, earth, 20 * scale, 2, "rgba(0,0,0,0)")
+        const mars = new Planet(speedFactor * 0.0057, origin, 280 * scale, 5, "rgba(0,0,0,0)")
+        const giove = new Planet(speedFactor * 0.0027, origin, 500 * scale, 5, "rgba(0,0,0,0)")
+
+        const giove_1 = new Planet(speedFactor * 0.0327, giove, 50 * scale, 5, "rgba(0,0,0,0)")
+        const giove_2 = new Planet(speedFactor * 0.0227, giove, 70 * scale, 5, "rgba(0,0,0,0)")
+        const giove_3 = new Planet(speedFactor * 0.0127, giove, 80 * scale, 5, "rgba(0,0,0,0)") 
+
+        const planets = [mars, earth, moon, sun, venere, giove, giove_1, giove_2, giove_3]
+        const toConnect = [mars, earth, moon, sun, venere, giove, giove_1, giove_2, giove_3]*/
+
+        /*
+        const transparent =  "rgba(0,0,0,0)"
+        const sun = new Planet(speedFactor * 0, origin, 0 * scale, 70, transparent)
+        const venere = new Planet(speedFactor * Math.PI /100, origin, 80 * scale, 5, transparent)
+        const earth = new Planet(speedFactor * Math.PI /125, origin, 170 * scale, 5, transparent)
+        const moon = new Planet(speedFactor * Math.PI /10, earth, 20 * scale, 2, transparent)
+        const mars = new Planet(speedFactor * Math.PI /200, origin, 280 * scale, 5, transparent)
+        const giove = new Planet(speedFactor * Math.PI /300, origin, 500 * scale, 5, transparent)
+
+        const giove_1 = new Planet(speedFactor * Math.PI /60, giove, 50 * scale, 5, transparent)
+        const giove_2 = new Planet(speedFactor * Math.PI /50, giove, 70 * scale, 5, transparent)
+        const giove_3 = new Planet(speedFactor * Math.PI /30, giove, 80 * scale, 5, transparent)
+
+        const planets = [mars, earth, moon, sun, venere, giove, giove_1, giove_2, giove_3]
+        const toConnect = [mars, earth, moon, sun, venere, giove, giove_1, giove_2, giove_3] */
+
+        const sun = new Planet(speedFactor * 0, origin, 0 * scale, 70, "yellow")
+        const venere = new Planet(speedFactor * Math.PI /100, origin, 90 * scale, 5, "rgb(170,140,100)")
+        const earth = new Planet(speedFactor * Math.PI /125, origin, 170 * scale, 5, "blue")
+        const moon = new Planet(speedFactor * Math.PI /10, earth, 20 * scale, 2, "grey")
+        const mars = new Planet(speedFactor * Math.PI /200, origin, 280 * scale, 5, "orange")
+        const giove = new Planet(speedFactor * Math.PI /300, origin, 500 * scale, 5, "rgb(220,220,220)")
+
+        const giove_1 = new Planet(speedFactor * Math.PI /60, giove, 50 * scale, 2, "rgb(110,110,110)")
+        const giove_2 = new Planet(speedFactor * Math.PI /50, giove, 70 * scale, 2, "rgb(020,120,260)")
+        const giove_3 = new Planet(speedFactor * Math.PI /30, giove, 80 * scale, 2, "rgb(250,20,80)")
+
+        const planets = [mars, earth, moon, sun, venere, giove, giove_1, giove_2, giove_3]
+        const toConnect = [mars, earth, moon, sun, venere, giove, giove_1, giove_2, giove_3] 
+        
+
+        function animate(){
+            requestAnimationFrame(animate);
+            //c.clearRect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
+            c.fillStyle = "rgba(0,0,0,.001)"
+            c.fillRect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
+
+            for(let f = 0; f < skipFrames; f++){
+                planets.forEach(p => {
+                    p.update()
+                    p.draw()
+                })
+            }
+            for(p1 of toConnect){
+                    for(p2 of toConnect){
+                        c.beginPath();
+                        c.strokeStyle = "rgba(255,255,255,.01)"
+                        c.moveTo(p1.x, p1.y);
+                        c.lineTo(p2.x, p2.y);
+                        c.stroke();
+                        c.closePath();
+                    }
+                }
+        }
+        animate();
+    </script>
+</html>

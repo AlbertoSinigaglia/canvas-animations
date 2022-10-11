@@ -1,0 +1,97 @@
+<html>
+    <head>
+        <style>
+            html{
+                width: 100%;
+                height: 100%;
+            }
+            canvas, body{
+                width: 100%;
+                height: 100%;
+                padding:0px;
+                margin:0px;
+                background-color: black;
+                position: relative
+            }
+            canvas{
+                position: absolute !important; top: 0; bottom: 0; left:0; right:0;background-color: rgba(0,0,0,0) !important;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas style="z-index: 999!important;"></canvas>
+        <canvas></canvas>
+        <script>
+            const [canvas] = document.querySelectorAll("canvas");
+            canvas.width = 1 * (window.innerWidth);
+            canvas.height = 1 * (window.innerHeight);
+            canvas.style.width = window.innerWidth+"px";
+            canvas.style.height = window.innerHeight+"px";
+        
+            const ctx = canvas.getContext("2d");
+            // ctx.translate(canvas.width/2,canvas.height/2);
+            const pos = {
+                x: null,
+                y: null,
+            }
+            let prev = []
+            canvas.addEventListener('mousemove', e => {
+                pos.x = e.clientX
+                pos.y = e.clientY
+            })
+            const nPoint = 25;
+
+            
+            function animate(){
+                requestAnimationFrame(animate);
+                ctx.beginPath();
+                ctx.fillStyle="rgba(0,0,0,.05)"
+                ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+                ctx.fill();
+                ctx.closePath();
+                if(pos.x && pos.y){
+                    let other = pos.y > canvas.height / 2 ? 
+                                        {x: pos.x , y: canvas.height / 2 - (pos.y - canvas.height / 2)} :
+                                        {x: pos.x , y: canvas.height / 2 + (canvas.height / 2 - pos.y)};
+
+                    let curr = [];
+                    if(other.y < pos.y){
+                        let dist = (pos.y - other.y) / nPoint
+                        for(let i = 0; i <= nPoint; i++){
+                            curr.push({
+                                x: other.x,
+                                y: other.y + i * dist
+                            })
+                        }
+                    } else {
+                        let dist = (other.y - pos.y) / nPoint
+                        for(let i = 0; i <=  nPoint; i++){
+                            curr.push({
+                                x: pos.x,
+                                y: pos.y + i * dist
+                            })
+                        }
+                    }
+                    for(let i = 0; i < prev.length; i++){
+                        ctx.beginPath();
+                        ctx.strokeStyle = '#eeff57'
+                        ctx.moveTo(prev[i].x, prev[i].y)
+                        ctx.lineTo(curr[i].x, curr[i].y);
+                        ctx.stroke();
+                        ctx.closePath();
+                    }
+                    prev = curr;
+
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#eeff57'
+                    ctx.moveTo(pos.x, pos.y)
+                    ctx.lineTo(other.x, other.y);
+                    ctx.stroke();
+                    ctx.closePath();
+
+                }
+            }
+            animate();
+        </script>
+    </body>
+</html>

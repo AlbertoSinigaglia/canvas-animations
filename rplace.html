@@ -1,0 +1,79 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+                position:relative;
+                background-color: #212121;
+            }
+            canvas{
+                border-width: 0px;
+                border-color:#212121;
+                background-color: white;
+            }
+            #info-box {
+                display: block;
+                background-color: white;
+                border: 1px solid grey;
+                padding: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="position: fixed; top:0; right:0; margin:30px; padding:20px; background-color: red;">
+            <p>X: </p>
+            <input type="text">
+            <p>Y: </p>
+            <input type="text">
+            <button>Confirm</button>
+        </div>
+        <canvas></canvas>
+        <div id="info-box" style="display: none;">
+            <p>Pixel owned with color:</p>
+            <div id="info-color" style="width:30px; height:30px; border: 1px solid grey"></div>
+        </div>
+    </body>
+    <script>
+        const canvas = document.querySelector("canvas");
+        const infoBox = document.querySelector("#info-box")
+        const infoColor = document.querySelector("#info-color")
+        canvas.addEventListener("mousemove", evt => {
+            evt.preventDefault()
+            infoBox.style.display="block"
+            infoBox.style.position="absolute"
+            infoBox.style.top=evt.clientY + 2 + "px"
+            infoBox.style.left=evt.clientX + 2 + "px"
+            const rect = canvas.getBoundingClientRect();
+            const pos =  {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+            infoColor.style.backgroundColor = `rgb(${board[pos.x][pos.y][0]}, ${board[pos.x][pos.y][1]}, ${board[pos.x][pos.y][2]})`
+        })
+        canvas.addEventListener("mouseleave", evt => {
+            evt.preventDefault()
+            infoBox.style.display="none"
+        }, false)
+        const w = 500;
+        canvas.width = w;
+        canvas.height = w;
+        const c = canvas.getContext('2d');
+
+        let board = Array.from({length: w})
+                        .map(_ => 
+                            Array.from({length: w}).map( _ => ([0,0,0])))
+        
+        function animate(){
+            const data = c.getImageData(0, 0, w, w);
+            board.flat(1).forEach((el, i) => {
+                data.data[i*4 + 0] = el[0]
+                data.data[i*4 + 1] = el[1]
+                data.data[i*4 + 2] = el[2]
+                data.data[i*4 + 3] = 255
+            })
+            c.putImageData(data, 0, 0);
+        }
+        setInterval(animate, 1000)
+    </script>
+</html>

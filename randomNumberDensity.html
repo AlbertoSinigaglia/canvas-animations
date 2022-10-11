@@ -1,0 +1,73 @@
+<html>
+    <head>
+        <style>
+            body{
+                padding:0px;
+                margin: 0px;
+                background-color: #212121;
+            }
+            canvas{
+                border-width: 0px;
+                border-color:#212121;
+                background-color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+    </body>
+    <script>
+        var canvas=document.querySelector("canvas");
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        var c= canvas.getContext('2d');
+        var draw=false;
+        var numberElementsPerRow = 30;
+        var squareWidth=30;
+        class Square{
+            constructor(x, y, w, n){
+                this.x = x;
+                this.y = y;
+                this.w = w;
+                this.hits = 0;
+                this.tot = 0;
+                this.n = n;
+            }
+            update(n){
+                if(n == this.n){
+                    this.hits++;
+                }
+                this.tot++;
+            }
+            draw(ctx, max) {
+                
+                ctx.fillStyle = `hsl(${Math.floor(this.hits/max*255)},100%,50%)`
+                ctx.fillRect(this.x, this.y, this.w, this.w)
+                ctx.strokeStyle="white"
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x, this.y+this.w);
+                ctx.lineTo(this.x+this.w, this.y+this.w);
+                ctx.lineTo(this.x+this.w, this.y);
+                ctx.lineTo(this.x, this.y);
+                ctx.closePath();
+            }
+        }
+        let squares = Array.from({length: numberElementsPerRow * numberElementsPerRow})
+                            .map((_, i) => 
+                                new Square(
+                                    (i%numberElementsPerRow) * squareWidth,
+                                    Math.floor(i/numberElementsPerRow) * squareWidth,
+                                    squareWidth, i))
+        
+        function animate(){
+            requestAnimationFrame(animate);
+            c.clearRect(0,0, canvas.width, canvas.height);
+            const n = Math.floor(Math.random()*squares.length)
+            squares.forEach(el => el.update(n))
+            const max = Math.max(...squares.map(el => el.hits))
+            squares.forEach(el => el.draw(c, max))
+        }
+        animate()
+    </script>
+</html>

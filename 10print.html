@@ -18,25 +18,25 @@
 
 
         var canvas=document.querySelector("canvas");
-        canvas.width=window.innerWidth;
-        canvas.height=window.innerHeight;
+        canvas.width=window.innerWidth || document.body.getBoundingClientRect().width;
+        canvas.height=window.innerHeight || document.body.getBoundingClientRect().height;
         var c= canvas.getContext('2d');
-        canvas.width = 2*window.innerWidth;
-        canvas.height = 2*window.innerHeight;
+        canvas.width = 4*window.innerWidth;
+        canvas.height = 4*window.innerHeight;
         canvas.style.width = window.innerWidth+"px";
         canvas.style.height = window.innerHeight+"px";
 
 
 
 
-        var nSlash=200;
-        var wSlash=canvas.width/nSlash;
+        var nSlash=500;
+        var wSlash=canvas.height/nSlash;
         var totSlash = Math.ceil(canvas.height/wSlash)*nSlash;
         var i= 0;
         c.strokeStyle="white";
         c.lineWidth=2;
         function animate(){
-            if(i<totSlash){
+            for(let ii = 0; ii < 3; ii++)if(i<totSlash){
                 requestAnimationFrame(animate);
                 var r = Math.round(Math.random());
                 var x1 = r*wSlash;
